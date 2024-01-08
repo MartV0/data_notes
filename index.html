@@ -1,0 +1,5839 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2024-01-08 Mon 17:39 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lecture 1</title>
+<meta name="author" content="martijnV" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Lecture 1</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org1f39b44">1. R basics</a>
+<ul>
+<li><a href="#orga4ad61e">1.1. Getting help</a></li>
+<li><a href="#org324bec2">1.2. CRAN and packages</a></li>
+<li><a href="#orgc9e5394">1.3. R Data formats and importing/writing data</a>
+<ul>
+<li><a href="#orga2965f8">1.3.1. Native data formats</a></li>
+<li><a href="#orgaf9e84e">1.3.2. Delimited Data types (csv etc.)</a></li>
+<li><a href="#org4f59500">1.3.3. SPSS Data (SAV)</a></li>
+<li><a href="#org0e2bc2b">1.3.4. Excel (xlsx)</a></li>
+</ul>
+</li>
+<li><a href="#org261a04d">1.4. R Functions</a>
+<ul>
+<li><a href="#org9cf1f68">1.4.1. User-Defined Functions</a></li>
+</ul>
+</li>
+<li><a href="#org0922d99">1.5. Iteration</a>
+<ul>
+<li><a href="#org33a3834">1.5.1. Loops</a></li>
+<li><a href="#org308331d">1.5.2. Apply</a></li>
+</ul>
+</li>
+<li><a href="#org05b1df2">1.6. Some tips/ style guide</a></li>
+</ul>
+</li>
+<li><a href="#org8f402b8">2. R Objects &amp; Data Types</a>
+<ul>
+<li><a href="#orgda66b1e">2.1. Vectors</a>
+<ul>
+<li><a href="#org33477b7">2.1.1. Atomic modes</a></li>
+<li><a href="#org67ab6a6">2.1.2. Generating vectors</a></li>
+<li><a href="#org2fefed9">2.1.3. Combining data types in vectors?</a></li>
+</ul>
+</li>
+<li><a href="#org050d0a6">2.2. Matrices</a>
+<ul>
+<li><a href="#orga965f36">2.2.1. Generating Matrices</a></li>
+<li><a href="#org1301755">2.2.2. Mixing data types</a></li>
+</ul>
+</li>
+<li><a href="#orgd905915">2.3. Lists</a>
+<ul>
+<li><a href="#org18d0281">2.3.1. Creating a list</a></li>
+<li><a href="#org5129a21">2.3.2. Named list elements</a></li>
+<li><a href="#org150940c">2.3.3. Append onto list</a></li>
+</ul>
+</li>
+<li><a href="#org3ad9747">2.4. Data Frames</a>
+<ul>
+<li><a href="#orgef4b085">2.4.1. Creating a dataframe</a></li>
+<li><a href="#orgf14e00f">2.4.2. Filling using sample or runif</a></li>
+</ul>
+</li>
+<li><a href="#org92ac97a">2.5. Factors</a>
+<ul>
+<li><a href="#org750d989">2.5.1. Creating factors</a></li>
+<li><a href="#org95b2171">2.5.2. Factor attributes</a></li>
+<li><a href="#orgaaf38c3">2.5.3. Internal representation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org297a6a4">3. Data Manipulation and pipes</a>
+<ul>
+<li><a href="#orgb7ec74d">3.1. Base R Subsetting</a>
+<ul>
+<li><a href="#org16e40f8">3.1.1. []</a></li>
+<li><a href="#org47a0346">3.1.2. [[]]</a></li>
+<li><a href="#orgef230dc">3.1.3. Matrices</a></li>
+<li><a href="#orgd9f1139">3.1.4. $ and lists</a></li>
+<li><a href="#org2123c38">3.1.5. Data Frames</a></li>
+<li><a href="#orga0ddb49">3.1.6. Logical indexing</a></li>
+</ul>
+</li>
+<li><a href="#orgd0daad6">3.2. Tidyverse subsetting</a></li>
+<li><a href="#orgbb7247d">3.3. Base R Variable Transformation</a></li>
+<li><a href="#orgaf912e6">3.4. Tidyverse Variable Transformations</a></li>
+<li><a href="#org0f6247d">3.5. Sorting &amp; Ordering</a>
+<ul>
+<li><a href="#org69d50de">3.5.1. Base R sort</a></li>
+<li><a href="#org95ac28d">3.5.2. Tidyverse Ordering</a></li>
+</ul>
+</li>
+<li><a href="#org5cd4471">3.6. Pipes</a>
+<ul>
+<li><a href="#org9a3aa99">3.6.1. Example use</a></li>
+<li><a href="#orgaebd791">3.6.2. dot . in a pipeline, target specific argument</a></li>
+<li><a href="#org84b696c">3.6.3. Exposition Pipe: %$%</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org83c1732">4. Data Visualization</a>
+<ul>
+<li><a href="#orgded93c6">4.1. Baser R Graphics</a>
+<ul>
+<li><a href="#org7bf83bf">4.1.1. Scatterplots</a></li>
+<li><a href="#org625f875">4.1.2. Histogram</a></li>
+<li><a href="#org9d73209">4.1.3. Boxplots</a></li>
+<li><a href="#orgf02642e">4.1.4. Kernel Density Plots</a></li>
+</ul>
+</li>
+<li><a href="#orgfcdcc3e">4.2. GGPlot graphics</a>
+<ul>
+<li><a href="#org62c124e">4.2.1. Grammar of graphics</a></li>
+<li><a href="#org71a3c1a">4.2.2. Basic Setup (Data and aesthetic)</a></li>
+<li><a href="#org7b72fbf">4.2.3. Geometries (line, dots etc)</a></li>
+<li><a href="#org07ea2e2">4.2.4. Statistics</a></li>
+<li><a href="#orgfbf8fbb">4.2.5. Styling</a></li>
+<li><a href="#org645eb44">4.2.6. Themes</a></li>
+<li><a href="#orga3b847f">4.2.7. Facets</a></li>
+<li><a href="#org5ef07b4">4.2.8. Joining multiple Figures</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgb8b67b9">5. Data Cleaning</a>
+<ul>
+<li><a href="#org6021009">5.1. Missing data</a>
+<ul>
+<li><a href="#org0b09506">5.1.1. Missing Data Pattern</a></li>
+<li><a href="#org63b8223">5.1.2. Nonresponse Rates</a></li>
+<li><a href="#org15aaa47">5.1.3. Visualizing Incomplete Data</a></li>
+</ul>
+</li>
+<li><a href="#org38abcc6">5.2. Outliers</a>
+<ul>
+<li><a href="#org6bff38c">5.2.1. Finding outliers: Boxplot Method</a></li>
+<li><a href="#orgb00cc09">5.2.2. Boxplot in R</a></li>
+<li><a href="#orgc648cf8">5.2.3. Breakdown Point</a></li>
+<li><a href="#org7867dc0">5.2.4. Outliers for Categorical Data</a></li>
+<li><a href="#org16826e2">5.2.5. Treating outliers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgb999204">6. Introduction to Linear Modeling</a>
+<ul>
+<li><a href="#org592088a">6.1. Simple Linear Regression</a>
+<ul>
+<li><a href="#orgb45f2a4">6.1.1. Thinking about error</a></li>
+<li><a href="#orgfd352d0">6.1.2. Estimating the Regression Coefficients</a></li>
+<li><a href="#org9afc8da">6.1.3. Model Fit, measures, r-squared</a></li>
+<li><a href="#org10b32c5">6.1.4. Information Criteria</a></li>
+<li><a href="#orgd164b5c">6.1.5. In R</a></li>
+</ul>
+</li>
+<li><a href="#org83c4c5a">6.2. Multiple Linear Regression</a>
+<ul>
+<li><a href="#orge122788">6.2.1. Comparing models/ multiple R<sup>2</sup>/ f statistic</a></li>
+</ul>
+</li>
+<li><a href="#orgccf947c">6.3. Categorical Predictors</a>
+<ul>
+<li><a href="#org73a6111">6.3.1. Contrast</a></li>
+<li><a href="#org7b2ac52">6.3.2. Significane Testing</a></li>
+</ul>
+</li>
+<li><a href="#org5ca07e5">6.4. Model-Based Prediction</a>
+<ul>
+<li><a href="#org35d33a9">6.4.1. Prediction example</a></li>
+<li><a href="#org5ec569f">6.4.2. Interval estimates for prediction</a></li>
+</ul>
+</li>
+<li><a href="#orgea06d14">6.5. Moderation</a>
+<ul>
+<li><a href="#org65501df">6.5.1. Additive regression + derivation</a></li>
+<li><a href="#org14c6356">6.5.2. Test for moderation</a></li>
+<li><a href="#orgdb87ec3">6.5.3. in R</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgf93f4e4">7. Regression Assumptions and Diagnostics</a>
+<ul>
+<li><a href="#org0d3dd3f">7.1. Assumptions of MLR</a>
+<ul>
+<li><a href="#orgcaa7c9e">7.1.1. 1 The model is linear in the parameters</a></li>
+<li><a href="#org19afde2">7.1.2. 2 The predictor matrix is full rank</a></li>
+<li><a href="#org7d8cdae">7.1.3. 3 The predictors are strictly exogenous</a></li>
+<li><a href="#org572cf2d">7.1.4. 4 The errors have constant, finit variance. heteroscedasticity</a></li>
+<li><a href="#orge3d9fd9">7.1.5. 5 The errors are uncorrelated</a></li>
+<li><a href="#orge072d62">7.1.6. 6 The errors are normally distributed.</a></li>
+<li><a href="#org03b4d47">7.1.7. Spherical errors (4+5)</a></li>
+</ul>
+</li>
+<li><a href="#org0852136">7.2. Regression Diagnostics</a>
+<ul>
+<li><a href="#org85a069f">7.2.1. Residual Plots</a></li>
+</ul>
+</li>
+<li><a href="#org71a895b">7.3. Influential Observations</a>
+<ul>
+<li><a href="#org7d1fc57">7.3.1. Outliers</a></li>
+<li><a href="#org4d4e093">7.3.2. High-Leverage Points</a></li>
+<li><a href="#org747fee3">7.3.3. Influential Points</a></li>
+<li><a href="#org83918f8">7.3.4. Removing Influential Observations</a></li>
+<li><a href="#org32458cf">7.3.5. Treating Influential Points</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org4656ade">8. Assumtions of Logistic Regression</a>
+<ul>
+<li><a href="#org9da2511">8.1. 1 The model is linear in the parameters</a></li>
+<li><a href="#orgfd1245b">8.2. 2 The predictor matrix if full rank</a></li>
+<li><a href="#org9668164">8.3. 3 The outcome is independently and identically binomially distributed</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org1f39b44" class="outline-2">
+<h2 id="org1f39b44"><span class="section-number-2">1.</span> R basics</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orga4ad61e" class="outline-3">
+<h3 id="orga4ad61e"><span class="section-number-3">1.1.</span> Getting help</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+You can get help for a function using
+</p>
+<div class="org-src-container">
+<pre class="src src-R">anova()
+?anova
+help(anova)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org324bec2" class="outline-3">
+<h3 id="org324bec2"><span class="section-number-3">1.2.</span> CRAN and packages</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+<b>CRAN</b> is a repo for R packages
+</p>
+<div class="org-src-container">
+<pre class="src src-R">install.packages("mice")
+# There are two ways to load a package into R:
+library(stats)
+require(stats)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc9e5394" class="outline-3">
+<h3 id="orgc9e5394"><span class="section-number-3">1.3.</span> R Data formats and importing/writing data</h3>
+<div class="outline-text-3" id="text-1-3">
+</div>
+<div id="outline-container-orga2965f8" class="outline-4">
+<h4 id="orga2965f8"><span class="section-number-4">1.3.1.</span> Native data formats</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<div class="org-src-container">
+<pre class="src src-R">## Load the built-in 'bfi' data from the 'psychTools' package
+data(bfi, package = "psychTools")
+
+## Access the documentation for the 'bfi' data
+?psychTools::bfi
+
+## Define the directory holding our data
+dataDir &lt;- "../../../data/"
+
+## Load the 'boys' data from the R workspace
+## '../../../data/boys.RData'
+load(paste0(dataDir, "boys.RData"))
+save(boys, file = paste0(dataDir, "tmp.RData"))
+
+## Load the 'titanic' data stored in R data set
+## '../../../data/titanic.rds'
+titanic &lt;- readRDS(paste0(dataDir, "titanic.rds"))
+saveRDS(titanic, file="titanic2.rds")
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgaf9e84e" class="outline-4">
+<h4 id="orgaf9e84e"><span class="section-number-4">1.3.2.</span> Delimited Data types (csv etc.)</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<div class="org-src-container">
+<pre class="src src-R">## Load the 'diabetes' data from the tab-delimited file
+## '../../../data/diabetes.txt'
+diabetes &lt;- read.table(paste0(dataDir, "diabetes.txt"),
+    header = TRUE,
+    sep = "\t")
+
+write.table(boys,
+    paste0(dataDir, "boys.txt"),
+    row.names = FALSE,
+    sep = "\t",
+    na = "-999")
+
+## Load the 2017 UTMB data from the comma-separated file
+## '../../../data/utmb_2017.csv'
+utmb1 &lt;- read.csv(paste0(dataDir, "utmb_2017.csv"))
+
+write.csv2(boys, paste0(dataDir, "boys.csv"), row.names = FALSE, na = "")
+</pre>
+</div>
+<ul class="org-ul">
+<li>The read.csv() function assumes the values are seperated by commas</li>
+<li>For EU-formatted CSV files (semicolons instead of commas), we can use read.csv2()</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org4f59500" class="outline-4">
+<h4 id="org4f59500"><span class="section-number-4">1.3.3.</span> SPSS Data (SAV)</h4>
+<div class="outline-text-4" id="text-1-3-3">
+<p>
+Reading this format is tricky, if we want to read SAV files there are two popular options:
+</p>
+<ul class="org-ul">
+<li>foreign::read.spss()</li>
+<li>haven::read<sub>spss</sub>()</li>
+</ul>
+
+<p>
+foreign doesn&rsquo;t have a read equivelant
+</p>
+<div class="org-src-container">
+<pre class="src src-R">## Load the foreign package:
+library(foreign)
+
+## Use foreign::read.spss() to read '../../../data/mtcars.sav' into a list
+mtcars1 &lt;- read.spss(paste0(dataDir, "mtcars.sav"))
+
+## Read '../../../data/mtcars.sav' as a data frame
+mtcars2 &lt;- read.spss(paste0(dataDir, "mtcars.sav"), to.data.frame = TRUE)
+
+## Read '../../../data/mtcars.sav' without value labels
+mtcars3 &lt;- read.spss(paste0(dataDir, "mtcars.sav"),
+    to.data.frame = TRUE,
+    use.value.labels = FALSE)
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-R">library(labelled)
+
+## Use haven::read_spss() to read '../../../data/mtcars.sav' into a tibble
+mtcars4 &lt;- read_spss(paste0(dataDir, "mtcars.sav"))
+</pre>
+</div>
+
+<p>
+haven::read<sub>spss</sub>() converts any SPSS variables with labels into labelled vectors
+</p>
+<ul class="org-ul">
+<li>We can use the labbeled::unlabeleld() function to remove the value labels</li>
+<li>[V-Sha~ -&gt; V-Shaped</li>
+</ul>
+
+<p>
+The best option we have for writing SPSS data is haven::write<sub>sav</sub>()
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">write_sav(mtcars2, paste0(dataDir, "mctars2.sav"))
+</pre>
+</div>
+<p>
+This will preserve label information provided by factor variables and the haven<sub>labelled</sub> class
+</p>
+</div>
+</div>
+<div id="outline-container-org0e2bc2b" class="outline-4">
+<h4 id="org0e2bc2b"><span class="section-number-4">1.3.4.</span> Excel (xlsx)</h4>
+<div class="outline-text-4" id="text-1-3-4">
+<p>
+We have two good options for loading data from Excel spreadsheets:
+</p>
+<ul class="org-ul">
+<li>readxl::read<sub>excel</sub>()</li>
+<li>openxlsx::read.xlsx()</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-R">## Load the packages:
+library(readxl)
+library(openxlsx)
+
+## Use the readxl::read_excel() function to read the data from the 'titanic'
+## sheet of the Excel workbook stored at '../../../data/example_data.xlsx'
+titanic2 &lt;- read_excel(paste0(dataDir, "example_data.xlsx"),
+    sheet = "titanic")
+
+## Use the openxlsx::read.xlsx() function to read the data from the 'titanic'
+## sheet of the Excel workbook stored at '../../../data/example_data.xlsx'
+titanic3 &lt;- read.xlsx(paste0(dataDir, "example_data.xlsx"),
+    sheet = "titanic")
+</pre>
+</div>
+
+<p>
+The openxlsx package provides a powerful toolkit for programmatically building Excel workbooks in R and saving the results.
+</p>
+<div class="org-src-container">
+<pre class="src src-R">## Use the openxlsx::write.xlsx() function to write the 'diabetes' data to an
+## XLSX workbook
+write.xlsx(diabetes, paste0(dataDir, "diabetes.xlsx"), overwrite = TRUE)
+
+## Use the openxlsx::write.xlsx() function to write each data frame in a list
+
+## to a separate sheet of an XLSX workbook
+write.xlsx(list(titanic = titanic, diabetes = diabetes, mtcars = mtcars),
+    paste0(dataDir, "example_data.xlsx"),
+    overwrite = TRUE)
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org261a04d" class="outline-3">
+<h3 id="org261a04d"><span class="section-number-3">1.4.</span> R Functions</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+Any R command written as a word followed by parentheses is a function
+</p>
+<ul class="org-ul">
+<li>mean()</li>
+<li>library()</li>
+</ul>
+<p>
+Infix operators are aliased functions
+</p>
+<ul class="org-ul">
+<li>&lt;-</li>
+<li>+ - *</li>
+<li>&gt; &lt; ==</li>
+</ul>
+</div>
+<div id="outline-container-org9cf1f68" class="outline-4">
+<h4 id="org9cf1f68"><span class="section-number-4">1.4.1.</span> User-Defined Functions</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<p>
+We can define our own functions using the &ldquo;function()&rdquo; function
+</p>
+<div class="org-src-container">
+<pre class="src src-R">square &lt;- function(x) {
+    out &lt;- x^2
+    out
+}
+
+square(5)
+</pre>
+</div>
+
+<pre class="example">
+25
+</pre>
+
+
+<p>
+One-line functions don&rsquo;t need braces:
+</p>
+<div class="org-src-container">
+<pre class="src src-R">square &lt;- function(x) x^2
+square(5)
+</pre>
+</div>
+
+<pre class="example">
+25
+</pre>
+</div>
+<ol class="org-ol">
+<li><a id="orgae1859e"></a>Not strictly typed<br />
+<div class="outline-text-5" id="text-1-4-1-1">
+<p>
+Function arguments are not strictly typed
+</p>
+<div class="org-src-container">
+<pre class="src src-R">square &lt;- function(x) x^2
+sqaure(TRUE) # 1
+square(1:5)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">9</td>
+</tr>
+
+<tr>
+<td class="org-right">16</td>
+</tr>
+
+<tr>
+<td class="org-right">25</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+But there are limits:
+</p>
+<div class="org-src-container">
+<pre class="src src-R">square("bob")
+</pre>
+</div>
+
+<p>
+Error in x<sup>2</sup>: non-numeric argument to binary operator
+</p>
+</div>
+</li>
+<li><a id="org7e40385"></a>Multiple/list arguments<br />
+<div class="outline-text-5" id="text-1-4-1-2">
+<p>
+<b>Multiple arguments:</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-R">mod &lt;- function(x, y) x %% y
+mod(10, 3)
+</pre>
+</div>
+
+<p>
+<b>Or you can use a list to get multiple arguments:</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-R">getLsBeta &lt;- function(datList) {
+    X &lt;- datList$X
+    y &lt;- datList$y
+    solve(crossprod(X)) %*% t(X) %*% y
+}
+
+X &lt;- matrix(runif(500), ncol = 5)
+datList &lt;- list(y = X %*% rep(0.5, 5), X = X)
+getLsBeta(datList = datList)
+</pre>
+</div>
+</div>
+</li>
+<li><a id="org32642d8"></a>Type/class of functions<br />
+<div class="outline-text-5" id="text-1-4-1-3">
+<p>
+Functions are first-class objects in R.
+</p>
+<ul class="org-ul">
+<li>We can treat functions like any other R object.</li>
+</ul>
+
+<p>
+R views an unevaluated function as an object with type ”closure”.
+</p>
+<div class="org-src-container">
+<pre class="src src-R">class(getLsBeta)
+</pre>
+</div>
+<p>
+[1] &ldquo;function&rdquo;
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">typeof(getLsBeta)
+</pre>
+</div>
+<p>
+[1] &ldquo;closure&rdquo;
+</p>
+
+<p>
+An evaluated functions is equivalent to the objects it returns.
+</p>
+<div class="org-src-container">
+<pre class="src src-R">class(getLsBeta(datList))
+</pre>
+</div>
+<p>
+[1] &ldquo;matrix&rdquo; &ldquo;array&rdquo;
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">typeof(getLsBeta(datList))
+</pre>
+</div>
+<p>
+[1] &ldquo;double&rdquo;
+</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org0922d99" class="outline-3">
+<h3 id="org0922d99"><span class="section-number-3">1.5.</span> Iteration</h3>
+<div class="outline-text-3" id="text-1-5">
+</div>
+<div id="outline-container-org33a3834" class="outline-4">
+<h4 id="org33a3834"><span class="section-number-4">1.5.1.</span> Loops</h4>
+<div class="outline-text-4" id="text-1-5-1">
+<p>
+There are three types of loops in R: for, while and until.
+Deze course behandelt alleen for (lol)
+</p>
+<div class="org-src-container">
+<pre class="src src-R">for(INDEX in RANGE) { Stuff To Do with the Current INDEX Value }
+</pre>
+</div>
+
+<p>
+<i>examples:</i>
+</p>
+<div class="org-src-container">
+<pre class="src src-R">val &lt;- 0
+for(i in 1:100) {
+    val &lt;- val + i
+}
+val
+</pre>
+</div>
+
+<pre class="example">
+5050
+</pre>
+
+
+<p>
+This loop will compute the mean of every column in the mtcars data
+</p>
+<div class="org-src-container">
+<pre class="src src-R">means &lt;- rep(0, ncol(mtcars))
+for(j in 1:ncol(mtcars)) {
+    means[j] &lt;- mean(mtcars[ , j])
+}
+means
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-R">listThing &lt;- list(6,9,4,2)
+sum &lt;- 0
+for(i in listThing) {
+    sum &lt;- i + sum
+}
+sum
+</pre>
+</div>
+
+<pre class="example">
+21
+</pre>
+
+
+<p>
+Usually there is a function to achieve what you are trying to do with the loop (sum() for example)
+</p>
+</div>
+</div>
+<div id="outline-container-org308331d" class="outline-4">
+<h4 id="org308331d"><span class="section-number-4">1.5.2.</span> Apply</h4>
+<div class="outline-text-4" id="text-1-5-2">
+<p>
+Usually one of two forms:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">apply(DATA, MARGIN, FUNCTION, ...)
+apply(DATA, FUNCTION, ...) # not sure if this works??? but was in slides
+</pre>
+</div>
+</div>
+<ol class="org-ol">
+<li><a id="orgacc2a71"></a>Margin<br />
+<div class="outline-text-5" id="text-1-5-2-1">
+<p>
+Margin is how the function should be applied:
+E.g., for a matrix 1 indicates rows, 2 indicates columns, c(1, 2) indicates rows and columns. Where X has named dimnames, it can be a character vector selecting dimension names.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">data(bfi, package = "psychTools")
+dat1 &lt;- bfi[1:5,1:3]
+# | 2 | 4 | 3 |
+# | 2 | 4 | 5 |
+# | 5 | 4 | 5 |
+# | 4 | 4 | 6 |
+# | 2 | 3 | 3 |
+# sum over rows with above table
+apply(dat1, 1, sum)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">9</td>
+</tr>
+
+<tr>
+<td class="org-right">11</td>
+</tr>
+
+<tr>
+<td class="org-right">14</td>
+</tr>
+
+<tr>
+<td class="org-right">14</td>
+</tr>
+
+<tr>
+<td class="org-right">8</td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="org-src-container">
+<pre class="src src-R">data(bfi, package = "psychTools")
+dat1 &lt;- bfi[1:5,1:3]
+# subtract 1 from every cell
+apply(dat1, (1:2), function(x)x-1)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">3</td>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">3</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">3</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">3</td>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">2</td>
+<td class="org-right">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+<li><a id="org71d7110"></a>lapply and sapply<br />
+<div class="outline-text-5" id="text-1-5-2-2">
+<p>
+similar concept but works on lists
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">list1 &lt;- list(1,3,4,2,4)
+lapply(list1, function(x) x+1)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">4</td>
+<td class="org-right">5</td>
+<td class="org-right">3</td>
+<td class="org-right">5</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+sapply is a user friendly wrapper for lapply which be default returns a vector or matrix
+</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org05b1df2" class="outline-3">
+<h3 id="org05b1df2"><span class="section-number-3">1.6.</span> Some tips/ style guide</h3>
+<div class="outline-text-3" id="text-1-6">
+<ul class="org-ul">
+<li>While using RStudie use TAB to quickly acces the documentation of the function arguments</li>
+<li>Use the <a href="https://style.tidyverse.org/">tidyverse style guide</a>
+<ul class="org-ul">
+<li>Can be down automatically in Rstudio -&gt; addins -&gt; style selection</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org8f402b8" class="outline-2">
+<h2 id="org8f402b8"><span class="section-number-2">2.</span> R Objects &amp; Data Types</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgda66b1e" class="outline-3">
+<h3 id="orgda66b1e"><span class="section-number-3">2.1.</span> Vectors</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Vectors are the simplest kind of R object, there is no concept of a &ldquo;scalar&rdquo; in R
+</p>
+</div>
+<div id="outline-container-org33477b7" class="outline-4">
+<h4 id="org33477b7"><span class="section-number-4">2.1.1.</span> Atomic modes</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+Vectors come in one of six &ldquo;atomic modes&rdquo;:
+</p>
+<ul class="org-ul">
+<li>numeric/double</li>
+<li>logical -&gt; bool</li>
+<li>character</li>
+<li>integer</li>
+<li>complex
+<ul class="org-ul">
+<li>A complex value in R is defined via the pure imaginary value i.</li>
+</ul></li>
+<li>raw
+<ul class="org-ul">
+<li>Intended to hold raw bytes</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org67ab6a6" class="outline-4">
+<h4 id="org67ab6a6"><span class="section-number-4">2.1.2.</span> Generating vectors</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<div class="org-src-container">
+<pre class="src src-R">c(1, 2, 3)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">1:5
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">1.2:5.3
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">3.2</td>
+</tr>
+
+<tr>
+<td class="org-right">4.2</td>
+</tr>
+
+<tr>
+<td class="org-right">5.2</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">rep(33,4)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">33</td>
+</tr>
+
+<tr>
+<td class="org-right">33</td>
+</tr>
+
+<tr>
+<td class="org-right">33</td>
+</tr>
+
+<tr>
+<td class="org-right">33</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">rep(1:3,3)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="org-src-container">
+<pre class="src src-R">rep(1:3,each=2)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">seq(0, 1, 0.25)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+</tr>
+
+<tr>
+<td class="org-right">0.25</td>
+</tr>
+
+<tr>
+<td class="org-right">0.5</td>
+</tr>
+
+<tr>
+<td class="org-right">0.75</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org2fefed9" class="outline-4">
+<h4 id="org2fefed9"><span class="section-number-4">2.1.3.</span> Combining data types in vectors?</h4>
+<div class="outline-text-4" id="text-2-1-3">
+<p>
+Not possible, some data types will be converted
+</p>
+<div class="org-src-container">
+<pre class="src src-R">a &lt;- c(1,2,3)
+b &lt;- c("foo", "bar")
+c(a,b)
+</pre>
+</div>
+
+<p>
+[1] &ldquo;1&rdquo; &ldquo;2&rdquo; &ldquo;3&rdquo; &ldquo;4&rdquo; &ldquo;5&rdquo; &ldquo;foo&rdquo; &ldquo;bar&rdquo;
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org050d0a6" class="outline-3">
+<h3 id="org050d0a6"><span class="section-number-3">2.2.</span> Matrices</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Matrices generalize vectors by adding a dimension attribute.
+</p>
+</div>
+<div id="outline-container-orga965f36" class="outline-4">
+<h4 id="orga965f36"><span class="section-number-4">2.2.1.</span> Generating Matrices</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<div class="org-src-container">
+<pre class="src src-R">matrix(1:5, nrow = 5, ncol = 2)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">5</td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="org-src-container">
+<pre class="src src-R">cbind(c(1,2,3),c(4,5,6))
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">6</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">m1 &lt;- matrix(1:5, nrow = 5, ncol = 2)
+attributes(m1)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Matrices are populated in column-major order, by default
+</p>
+<div class="org-src-container">
+<pre class="src src-R">matrix(1:9, 3, 3)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+<td class="org-right">7</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">5</td>
+<td class="org-right">8</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">6</td>
+<td class="org-right">9</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+The byrow = TRUE option allows us to fill by row-major order
+</p>
+<div class="org-src-container">
+<pre class="src src-R">matrix(1:9, 3, 3, byrow = TRUE)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">2</td>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">5</td>
+<td class="org-right">6</td>
+</tr>
+
+<tr>
+<td class="org-right">7</td>
+<td class="org-right">8</td>
+<td class="org-right">9</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org1301755" class="outline-4">
+<h4 id="org1301755"><span class="section-number-4">2.2.2.</span> Mixing data types</h4>
+<div class="outline-text-4" id="text-2-2-2">
+<p>
+Like vectors, matrices can only hold one type of data
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd905915" class="outline-3">
+<h3 id="orgd905915"><span class="section-number-3">2.3.</span> Lists</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Lists are the workhorse of R data objects
+</p>
+<ul class="org-ul">
+<li>An R list can hold an arbitrary set of other R objects</li>
+</ul>
+
+<p>
+In lists data types CAN be mixed
+</p>
+</div>
+<div id="outline-container-org18d0281" class="outline-4">
+<h4 id="org18d0281"><span class="section-number-4">2.3.1.</span> Creating a list</h4>
+<div class="outline-text-4" id="text-2-3-1">
+<div class="org-src-container">
+<pre class="src src-R">list(1,2, "HI mom", TRUE)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">2</td>
+<td class="org-left">HI mom</td>
+<td class="org-left">TRUE</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org5129a21" class="outline-4">
+<h4 id="org5129a21"><span class="section-number-4">2.3.2.</span> Named list elements</h4>
+<div class="outline-text-4" id="text-2-3-2">
+<div class="org-src-container">
+<pre class="src src-R">l3 &lt;- list(name = "bob",
+    alive = TRUE,
+    age = 33,
+    relationshipStatus = 42+3i)
+
+l3$name
+</pre>
+</div>
+
+<pre class="example">
+bob
+</pre>
+
+
+<p>
+Can also be done post-hoc via the names()
+</p>
+<div class="org-src-container">
+<pre class="src src-R">l1 = list(3, "hi", TRUE)
+names(l1) &lt;- c("name1", "second", "last")
+l1$second
+</pre>
+</div>
+
+<pre class="example">
+hi
+</pre>
+</div>
+</div>
+<div id="outline-container-org150940c" class="outline-4">
+<h4 id="org150940c"><span class="section-number-4">2.3.3.</span> Append onto list</h4>
+<div class="outline-text-4" id="text-2-3-3">
+<div class="org-src-container">
+<pre class="src src-R">(l4 &lt;- list())
+l4$people &lt;- c("Bob", "Alice", "Suzy")
+l4$money &lt;- 0
+l4$logical &lt;- FALSE
+l4
+</pre>
+</div>
+
+<p>
+$people
+[1] &ldquo;Bob&rdquo;   &ldquo;Alice&rdquo; &ldquo;Suzy&rdquo;
+$money
+[1] 0
+$logical
+[1] FALSE
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org3ad9747" class="outline-3">
+<h3 id="org3ad9747"><span class="section-number-3">2.4.</span> Data Frames</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+R&rsquo;s way of storing rectangular data sets
+</p>
+<ul class="org-ul">
+<li>Each column of a data frame is a vector</li>
+<li>Each of these vectors can have a different type:</li>
+</ul>
+
+<p>
+Data frames are actually lists of vectors (representing the columns)
+</p>
+</div>
+<div id="outline-container-orgef4b085" class="outline-4">
+<h4 id="orgef4b085"><span class="section-number-4">2.4.1.</span> Creating a dataframe</h4>
+<div class="outline-text-4" id="text-2-4-1">
+<p>
+We can create one using data.frame()
+</p>
+<div class="org-src-container">
+<pre class="src src-R">data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.1</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">1</td>
+<td class="org-right">0.2</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.3</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">1</td>
+<td class="org-right">0.4</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.5</td>
+</tr>
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+<td class="org-right">0.6</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Columns can also be given names:
+</p>
+<div class="org-src-container">
+<pre class="src src-R">data.frame(x = 1:6, y = c(-1, 1), z = seq(0.1, 0.6, 0.1))
+</pre>
+</div>
+
+<p>
+  x  y   z
+1 1 -1 0.1
+2 2  1 0.2
+3 3 -1 0.3
+4 4  1 0.4
+5 5 -1 0.5
+6 6  1 0.6
+</p>
+
+<p>
+<b>Creating from matrix</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-R">data.frame(matrix(5, 4, 3))
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">5</td>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">5</td>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">5</td>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">5</td>
+<td class="org-right">5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-orgf14e00f" class="outline-4">
+<h4 id="orgf14e00f"><span class="section-number-4">2.4.2.</span> Filling using sample or runif</h4>
+<div class="outline-text-4" id="text-2-4-2">
+<p>
+Sample makes a vector of some length randomly sampled from a vector
+</p>
+
+<p>
+Runif generates a vector of random numbers
+</p>
+<div class="org-src-container">
+<pre class="src src-R">data.frame(a = sample(c(TRUE, FALSE), 5, replace = TRUE),
+    b = sample(c("foo", "bar"), 5, replace = TRUE),
+    c = runif(5)
+    )
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">TRUE</td>
+<td class="org-left">foo</td>
+<td class="org-right">0.640138026094064</td>
+</tr>
+
+<tr>
+<td class="org-left">TRUE</td>
+<td class="org-left">bar</td>
+<td class="org-right">0.0884113181382418</td>
+</tr>
+
+<tr>
+<td class="org-left">TRUE</td>
+<td class="org-left">bar</td>
+<td class="org-right">0.099734982708469</td>
+</tr>
+
+<tr>
+<td class="org-left">TRUE</td>
+<td class="org-left">bar</td>
+<td class="org-right">0.862016763305292</td>
+</tr>
+
+<tr>
+<td class="org-left">TRUE</td>
+<td class="org-left">bar</td>
+<td class="org-right">0.991723588900641</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="outline-container-org92ac97a" class="outline-3">
+<h3 id="org92ac97a"><span class="section-number-3">2.5.</span> Factors</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+Factors are R’s way of repesenting nominal (categorical) variables
+</p>
+<ul class="org-ul">
+<li>We can create a factor using the factor() function</li>
+</ul>
+</div>
+<div id="outline-container-org750d989" class="outline-4">
+<h4 id="org750d989"><span class="section-number-4">2.5.1.</span> Creating factors</h4>
+<div class="outline-text-4" id="text-2-5-1">
+<div class="org-src-container">
+<pre class="src src-R">factor(sample(1:3, 8, TRUE), labels = c("red", "yellow", "blue"))
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">red</td>
+</tr>
+
+<tr>
+<td class="org-left">blue</td>
+</tr>
+
+<tr>
+<td class="org-left">red</td>
+</tr>
+
+<tr>
+<td class="org-left">blue</td>
+</tr>
+
+<tr>
+<td class="org-left">yellow</td>
+</tr>
+
+<tr>
+<td class="org-left">blue</td>
+</tr>
+
+<tr>
+<td class="org-left">yellow</td>
+</tr>
+
+<tr>
+<td class="org-left">yellow</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org95b2171" class="outline-4">
+<h4 id="org95b2171"><span class="section-number-4">2.5.2.</span> Factor attributes</h4>
+<div class="outline-text-4" id="text-2-5-2">
+<div class="org-src-container">
+<pre class="src src-R">x &lt;- factor(sample(1:3, 8, TRUE), labels = c("red", "yellow", "blue"))
+attributes(x)
+</pre>
+</div>
+
+<p>
+$levels
+[1] &ldquo;red&rdquo;    &ldquo;yellow&rdquo; &ldquo;blue&rdquo;
+$class
+[1] &ldquo;factor&rdquo;
+</p>
+</div>
+</div>
+<div id="outline-container-orgaaf38c3" class="outline-4">
+<h4 id="orgaaf38c3"><span class="section-number-4">2.5.3.</span> Internal representation</h4>
+<div class="outline-text-4" id="text-2-5-3">
+<p>
+Even though a factor’s data are represented by an integer vector, R does not consider factors to be interger/numeric data.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org297a6a4" class="outline-2">
+<h2 id="org297a6a4"><span class="section-number-2">3.</span> Data Manipulation and pipes</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgb7ec74d" class="outline-3">
+<h3 id="orgb7ec74d"><span class="section-number-3">3.1.</span> Base R Subsetting</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+In Base R, we typically use three operators to subset objects
+</p>
+<ul class="org-ul">
+<li>[]</li>
+<li>[[]]</li>
+<li>$</li>
+</ul>
+
+<p>
+Which we choose depends on:
+</p>
+<ul class="org-ul">
+<li>What type of object are we trying to subset?</li>
+<li>How much of the original typing do we want to keep in the subset?</li>
+</ul>
+</div>
+<div id="outline-container-org16e40f8" class="outline-4">
+<h4 id="org16e40f8"><span class="section-number-4">3.1.1.</span> []</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<div class="org-src-container">
+<pre class="src src-R">x &lt;- 10:20
+x [2]
+x [1:3]
+x [c(2, 5, 7)] # 11, 14, 16
+x [c(TRUE, FALSE, TRUE, FALSE, FALSE)]
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">10</td>
+</tr>
+
+<tr>
+<td class="org-right">12</td>
+</tr>
+
+<tr>
+<td class="org-right">15</td>
+</tr>
+
+<tr>
+<td class="org-right">17</td>
+</tr>
+
+<tr>
+<td class="org-right">20</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org47a0346" class="outline-4">
+<h4 id="org47a0346"><span class="section-number-4">3.1.2.</span> [[]]</h4>
+<div class="outline-text-4" id="text-3-1-2">
+<p>
+Rarely used, does have some differences though, drops any names or dimnames attribute, and only allows selection of a single element
+</p>
+<div class="org-src-container">
+<pre class="src src-R">x &lt;- 10:20
+x [[2]]
+</pre>
+</div>
+
+<pre class="example">
+11
+</pre>
+
+<p>
+The [] method returns objects of class list (or data.frame if foo was a data.frame) while the [[]] method returns objects whose class is determined by the type of their values.
+</p>
+</div>
+</div>
+<div id="outline-container-orgef230dc" class="outline-4">
+<h4 id="orgef230dc"><span class="section-number-4">3.1.3.</span> Matrices</h4>
+<div class="outline-text-4" id="text-3-1-3">
+<div class="org-src-container">
+<pre class="src src-R">y &lt;- matrix(1:24, 6, 4)
+y[4:6,2:3] # 2
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">10</td>
+<td class="org-right">16</td>
+</tr>
+
+<tr>
+<td class="org-right">11</td>
+<td class="org-right">17</td>
+</tr>
+
+<tr>
+<td class="org-right">12</td>
+<td class="org-right">18</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+We can mix different selecting styles
+</p>
+<div class="org-src-container">
+<pre class="src src-R">y &lt;- matrix(1:24, 6, 4)
+y[c(2,4),c(FALSE, TRUE, TRUE)] # 2
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">8</td>
+<td class="org-right">14</td>
+</tr>
+
+<tr>
+<td class="org-right">10</td>
+<td class="org-right">16</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-orgd9f1139" class="outline-4">
+<h4 id="orgd9f1139"><span class="section-number-4">3.1.4.</span> $ and lists</h4>
+<div class="outline-text-4" id="text-3-1-4">
+<p>
+We can use all three operators to subset lists.
+</p>
+<div class="org-src-container">
+<pre class="src src-R">list1 &lt;- list(2, "noo", TRUE)
+names(list1) &lt;- c("first", "second", "last")
+
+list1$first
+
+list1[1]
+
+list1[["first"]]
+</pre>
+</div>
+
+<pre class="example">
+2
+</pre>
+
+
+<div class="org-src-container">
+<pre class="src src-R">l4 &lt;- list(2, "noo", TRUE)
+names(l4) &lt;- c("first", "second", "last")
+tmp1 &lt;- l4[1]
+tmp1$people
+# [1] "Bob" "Alice" "Suzy"
+class(tmp1)
+# [1] "list"
+tmp2 &lt;- l4[[1]]
+# [1] "Bob" "Alice" "Suzy"
+class(tmp2)
+# [1] "character"
+</pre>
+</div>
+
+<pre class="example">
+numeric
+</pre>
+</div>
+</div>
+<div id="outline-container-org2123c38" class="outline-4">
+<h4 id="org2123c38"><span class="section-number-4">3.1.5.</span> Data Frames</h4>
+<div class="outline-text-4" id="text-3-1-5">
+<p>
+We can subset the columns of a data frame using list semantics
+</p>
+<div class="org-src-container">
+<pre class="src src-R">d3 &lt;- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) &lt;- c("a", "b", "c")
+d3$a
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">6</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">d3 &lt;- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) &lt;- c("a", "b", "c")
+d3[1]
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">6</td>
+</tr>
+</tbody>
+</table>
+
+
+<div id="org679465e" class="figure">
+<p><img src="Data_Manipulation_and_pipes/2023-11-23_16-18-08_screenshot.png" alt="2023-11-23_16-18-08_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orga0ddb49" class="outline-4">
+<h4 id="orga0ddb49"><span class="section-number-4">3.1.6.</span> Logical indexing</h4>
+<div class="outline-text-4" id="text-3-1-6">
+<p>
+Filter by rows
+</p>
+<div class="org-src-container">
+<pre class="src src-R">d3 &lt;- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) &lt;- c("a", "b", "c")
+d3[(d3$a)%%2==0 &amp; d3$c&gt;0,]
+</pre>
+</div>
+<p>
+Notic the comma at the end!
+</p>
+
+<p>
+This comma is needed because R uses the following notation for subsetting data frames.
+</p>
+
+<p>
+data(rows you want, columns you want)
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">1</td>
+<td class="org-right">0.2</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">1</td>
+<td class="org-right">0.4</td>
+</tr>
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+<td class="org-right">0.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd0daad6" class="outline-3">
+<h3 id="orgd0daad6"><span class="section-number-3">3.2.</span> Tidyverse subsetting</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+The dplyr package provides ways to subset data, two are most frequently used:
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="org8ef8973"></a>select<br />
+<div class="outline-text-5" id="text-3-2-0-1">
+<div class="org-src-container">
+<pre class="src src-R">library(dplyr)
+d3 &lt;- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) &lt;- c("a", "b", "c")
+select(d3, a, b)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">-1</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">-1</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">-1</td>
+</tr>
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">library(dplyr)
+d3 &lt;- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) &lt;- c("a", "b", "c")
+select(d3, -a)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">-1</td>
+<td class="org-right">0.1</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">0.2</td>
+</tr>
+
+<tr>
+<td class="org-right">-1</td>
+<td class="org-right">0.3</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">0.4</td>
+</tr>
+
+<tr>
+<td class="org-right">-1</td>
+<td class="org-right">0.5</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">0.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+<li><a id="org777d4bb"></a>filter and logical indexing<br />
+<div class="outline-text-5" id="text-3-2-0-2">
+<div class="org-src-container">
+<pre class="src src-R">library(dplyr)
+d3 &lt;- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) &lt;- c("a", "b", "c")
+filter(d3, a%%2==0, c&gt;0)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">1</td>
+<td class="org-right">0.2</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">1</td>
+<td class="org-right">0.4</td>
+</tr>
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+<td class="org-right">0.6</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+We can achieve the same using logical indexing in Base R
+</p>
+<div class="org-src-container">
+<pre class="src src-R">d3 &lt;- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) &lt;- c("a", "b", "c")
+d3[(d3$a)%%2==0 &amp; d3$c&gt;0,]
+</pre>
+</div>
+<p>
+Notic the comma at the end!
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">1</td>
+<td class="org-right">0.2</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">1</td>
+<td class="org-right">0.4</td>
+</tr>
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+<td class="org-right">0.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-orgbb7247d" class="outline-3">
+<h3 id="orgbb7247d"><span class="section-number-3">3.3.</span> Base R Variable Transformation</h3>
+<div class="outline-text-3" id="text-3-3">
+<div class="org-src-container">
+<pre class="src src-R">d3 &lt;- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) &lt;- c("a", "b", "c")
+d4 &lt;- d3
+d4$a &lt;- scale(d4$a)
+d4$a &lt;- as.numeric(d4$a)
+d4
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">-1.33630620956212</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.1</td>
+</tr>
+
+<tr>
+<td class="org-right">-0.801783725737273</td>
+<td class="org-right">1</td>
+<td class="org-right">0.2</td>
+</tr>
+
+<tr>
+<td class="org-right">-0.267261241912424</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.3</td>
+</tr>
+
+<tr>
+<td class="org-right">0.267261241912424</td>
+<td class="org-right">1</td>
+<td class="org-right">0.4</td>
+</tr>
+
+<tr>
+<td class="org-right">0.801783725737273</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.5</td>
+</tr>
+
+<tr>
+<td class="org-right">1.33630620956212</td>
+<td class="org-right">1</td>
+<td class="org-right">0.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-orgaf912e6" class="outline-3">
+<h3 id="orgaf912e6"><span class="section-number-3">3.4.</span> Tidyverse Variable Transformations</h3>
+<div class="outline-text-3" id="text-3-4">
+<div class="org-src-container">
+<pre class="src src-R">library(dplyr)
+d3 &lt;- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) &lt;- c("a", "b", "c")
+
+mutate(d3,
+    d = rbinom(nrow(d3), 1, c),
+    e = d * c,
+    a = scale(a)
+)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">-1.33630620956212</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+</tr>
+
+<tr>
+<td class="org-right">-0.801783725737273</td>
+<td class="org-right">1</td>
+<td class="org-right">0.2</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+</tr>
+
+<tr>
+<td class="org-right">-0.267261241912424</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.3</td>
+<td class="org-right">1</td>
+<td class="org-right">0.3</td>
+</tr>
+
+<tr>
+<td class="org-right">0.267261241912424</td>
+<td class="org-right">1</td>
+<td class="org-right">0.4</td>
+<td class="org-right">1</td>
+<td class="org-right">0.4</td>
+</tr>
+
+<tr>
+<td class="org-right">0.801783725737273</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.5</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+</tr>
+
+<tr>
+<td class="org-right">1.33630620956212</td>
+<td class="org-right">1</td>
+<td class="org-right">0.6</td>
+<td class="org-right">1</td>
+<td class="org-right">0.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org0f6247d" class="outline-3">
+<h3 id="org0f6247d"><span class="section-number-3">3.5.</span> Sorting &amp; Ordering</h3>
+<div class="outline-text-3" id="text-3-5">
+</div>
+<div id="outline-container-org69d50de" class="outline-4">
+<h4 id="org69d50de"><span class="section-number-4">3.5.1.</span> Base R sort</h4>
+<div class="outline-text-4" id="text-3-5-1">
+<div class="org-src-container">
+<pre class="src src-R">l3 &lt;- runif(n=8, min=1, max=20)
+sort(l3)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">1.14997771941125</td>
+</tr>
+
+<tr>
+<td class="org-right">6.18364422139712</td>
+</tr>
+
+<tr>
+<td class="org-right">7.40294478787109</td>
+</tr>
+
+<tr>
+<td class="org-right">8.80276804696769</td>
+</tr>
+
+<tr>
+<td class="org-right">10.6937525619287</td>
+</tr>
+
+<tr>
+<td class="org-right">14.7475167061202</td>
+</tr>
+
+<tr>
+<td class="org-right">16.3595214642119</td>
+</tr>
+
+<tr>
+<td class="org-right">16.9985088445246</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">l3 &lt;- runif(n=8, min=1, max=20)
+sort(l3, decreasing = TRUE)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">15.9437932423316</td>
+</tr>
+
+<tr>
+<td class="org-right">15.0901547158137</td>
+</tr>
+
+<tr>
+<td class="org-right">9.608802491799</td>
+</tr>
+
+<tr>
+<td class="org-right">4.20592033001594</td>
+</tr>
+
+<tr>
+<td class="org-right">4.16299939691089</td>
+</tr>
+
+<tr>
+<td class="org-right">2.97972352942452</td>
+</tr>
+
+<tr>
+<td class="org-right">2.14775081258267</td>
+</tr>
+
+<tr>
+<td class="org-right">1.15068965195678</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org95ac28d" class="outline-4">
+<h4 id="org95ac28d"><span class="section-number-4">3.5.2.</span> Tidyverse Ordering</h4>
+<div class="outline-text-4" id="text-3-5-2">
+<div class="org-src-container">
+<pre class="src src-R">library(dplyr)
+d3 &lt;- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) &lt;- c("a", "b", "c")
+
+d3$d &lt;- runif(n=6, min=1, max=20)
+arrange(d3, d)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">1</td>
+<td class="org-right">0.4</td>
+<td class="org-right">1.03251850209199</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.5</td>
+<td class="org-right">2.67228518775664</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.3</td>
+<td class="org-right">6.22691969852895</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.1</td>
+<td class="org-right">8.31828686594963</td>
+</tr>
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+<td class="org-right">0.6</td>
+<td class="org-right">12.4162582552526</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">1</td>
+<td class="org-right">0.2</td>
+<td class="org-right">15.5486617612187</td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="org-src-container">
+<pre class="src src-R">library(dplyr)
+d3 &lt;- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) &lt;- c("a", "b", "c")
+
+d3$d &lt;- runif(n=6, min=1, max=20)
+arrange(d3, a*d, c)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">1</td>
+<td class="org-right">0.2</td>
+<td class="org-right">1.041215069592</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.1</td>
+<td class="org-right">19.1222469233908</td>
+</tr>
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+<td class="org-right">0.6</td>
+<td class="org-right">8.04311123443767</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.3</td>
+<td class="org-right">18.1283924696036</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">1</td>
+<td class="org-right">0.4</td>
+<td class="org-right">15.9365976287518</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">-1</td>
+<td class="org-right">0.5</td>
+<td class="org-right">15.7623822011519</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="outline-container-org5cd4471" class="outline-3">
+<h3 id="org5cd4471"><span class="section-number-3">3.6.</span> Pipes</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+The %&gt;% symbol represents the pipe operator, used to compose functions
+</p>
+<ul class="org-ul">
+<li>f(x) becomes x %&gt;% f()</li>
+<li>f(x, y) becomes x %&gt;% f(y)</li>
+<li>h(g(f(x))) becomes x %&gt;% f %&gt;% g %&gt;% h</li>
+</ul>
+
+<p>
+Big brain lecturer forgot to mention this operator is not in the standard library, is in dplyr, magrittr and tidyverse among others
+</p>
+</div>
+<div id="outline-container-org9a3aa99" class="outline-4">
+<h4 id="org9a3aa99"><span class="section-number-4">3.6.1.</span> Example use</h4>
+<div class="outline-text-4" id="text-3-6-1">
+<p>
+<i>Example use:</i>
+</p>
+<div class="org-src-container">
+<pre class="src src-R">library(dplyr)
+
+sqr &lt;- function (x)
+{
+    x**2
+}
+
+plus1 &lt;- function (x)
+{
+    x + 1
+}
+
+test &lt;-
+    (1:10) %&gt;%
+    sqr() %&gt;%
+    plus1()
+
+test
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">10</td>
+</tr>
+
+<tr>
+<td class="org-right">17</td>
+</tr>
+
+<tr>
+<td class="org-right">26</td>
+</tr>
+
+<tr>
+<td class="org-right">37</td>
+</tr>
+
+<tr>
+<td class="org-right">50</td>
+</tr>
+
+<tr>
+<td class="org-right">65</td>
+</tr>
+
+<tr>
+<td class="org-right">82</td>
+</tr>
+
+<tr>
+<td class="org-right">101</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+<i>This is equivalent to:</i>
+</p>
+<div class="org-src-container">
+<pre class="src src-R">test &lt;-
+    sqr(
+        plus1(
+            (1:10)))
+
+test
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgaebd791" class="outline-4">
+<h4 id="orgaebd791"><span class="section-number-4">3.6.2.</span> dot . in a pipeline, target specific argument</h4>
+<div class="outline-text-4" id="text-3-6-2">
+<p>
+Specify where you want the piped value to go
+</p>
+<div class="org-src-container">
+<pre class="src src-R">library(dplyr)
+
+power &lt;- function (x, y)
+{
+    x**y
+}
+
+test &lt;-
+    (1:10) %&gt;%
+    power(3, y=.)
+
+test
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">9</td>
+</tr>
+
+<tr>
+<td class="org-right">27</td>
+</tr>
+
+<tr>
+<td class="org-right">81</td>
+</tr>
+
+<tr>
+<td class="org-right">243</td>
+</tr>
+
+<tr>
+<td class="org-right">729</td>
+</tr>
+
+<tr>
+<td class="org-right">2187</td>
+</tr>
+
+<tr>
+<td class="org-right">6561</td>
+</tr>
+
+<tr>
+<td class="org-right">19683</td>
+</tr>
+
+<tr>
+<td class="org-right">59049</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org84b696c" class="outline-4">
+<h4 id="org84b696c"><span class="section-number-4">3.6.3.</span> Exposition Pipe: %$%</h4>
+<div class="outline-text-4" id="text-3-6-3">
+<p>
+[%$%] expose the names in lhs to the rhs expression. This is useful when functions do not have a built-in data argument.
+or
+The exposition pipe exposes the contents of an object to the next function in the pipeline.
+</p>
+<div class="org-src-container">
+<pre class="src src-R">library(dplyr)
+
+# all equivelant:
+
+cats %$% t.test(Hwt ~ Sex)
+cats %&gt;% t.test(Hwt ~ Sex, data = .)
+t.test(Hwt ~ Sex, data = cats)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org83c1732" class="outline-2">
+<h2 id="org83c1732"><span class="section-number-2">4.</span> Data Visualization</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-orgded93c6" class="outline-3">
+<h3 id="orgded93c6"><span class="section-number-3">4.1.</span> Baser R Graphics</h3>
+<div class="outline-text-3" id="text-4-1">
+</div>
+<div id="outline-container-org7bf83bf" class="outline-4">
+<h4 id="org7bf83bf"><span class="section-number-4">4.1.1.</span> Scatterplots</h4>
+<div class="outline-text-4" id="text-4-1-1">
+<p>
+We can create a basic scatterplot using the plot() function
+</p>
+<div class="org-src-container">
+<pre class="src src-R">plot(runif(20, 0, 100), runif(20, 0, 10))
+</pre>
+</div>
+
+
+<div id="org7c8309e" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-17-25_screenshot.png" alt="2023-11-27_17-17-25_screenshot.png" />
+</p>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-R">diabetes %$% plot(
+    y = tc,
+    x = bmi,
+    ylab = "Total Cholesterol",
+    xlab = "Body Mass Index",
+    main = "Relation between BMI and Cholesterol",
+    ylim = c(0, 350),
+    xlim = c(0, 50)
+    )
+</pre>
+</div>
+
+
+<div id="org7374d15" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-19-43_screenshot.png" alt="2023-11-27_17-19-43_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org625f875" class="outline-4">
+<h4 id="org625f875"><span class="section-number-4">4.1.2.</span> Histogram</h4>
+<div class="outline-text-4" id="text-4-1-2">
+<p>
+We can create a simple histogram with the hist() function
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">hist(runif(30,0,10))
+</pre>
+</div>
+
+
+<div id="org95f3e73" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-21-52_screenshot.png" alt="2023-11-27_17-21-52_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org9d73209" class="outline-4">
+<h4 id="org9d73209"><span class="section-number-4">4.1.3.</span> Boxplots</h4>
+<div class="outline-text-4" id="text-4-1-3">
+<p>
+We can create simple boxplots via the boxplot function
+</p>
+<div class="org-src-container">
+<pre class="src src-R">boxplot(runif(30,40,60),runif(60,10,50))
+</pre>
+</div>
+
+
+<div id="org0755080" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-24-41_screenshot.png" alt="2023-11-27_17-24-41_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf02642e" class="outline-4">
+<h4 id="orgf02642e"><span class="section-number-4">4.1.4.</span> Kernel Density Plots</h4>
+<div class="outline-text-4" id="text-4-1-4">
+<div class="org-src-container">
+<pre class="src src-R">density(runif(5,0,100)) %&gt;% plot()
+</pre>
+</div>
+
+
+<div id="org2fbb96e" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-27-25_screenshot.png" alt="2023-11-27_17-27-25_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgfcdcc3e" class="outline-3">
+<h3 id="orgfcdcc3e"><span class="section-number-3">4.2.</span> GGPlot graphics</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+Base R graphics are fine for quick and dirty visualizations but for publication quality graphics, you should probably use GGPlot
+</p>
+<ul class="org-ul">
+<li>GGPlot uses the ”grammar of graphics” and ”tidy data” to build up a figure from modular components.</li>
+</ul>
+</div>
+<div id="outline-container-org62c124e" class="outline-4">
+<h4 id="org62c124e"><span class="section-number-4">4.2.1.</span> Grammar of graphics</h4>
+<div class="outline-text-4" id="text-4-2-1">
+
+<div id="org3d2fa34" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-29-27_screenshot.png" alt="2023-11-27_17-29-27_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org71a3c1a" class="outline-4">
+<h4 id="org71a3c1a"><span class="section-number-4">4.2.2.</span> Basic Setup (Data and aesthetic)</h4>
+<div class="outline-text-4" id="text-4-2-2">
+<p>
+We start by initializing the object that will define our plot
+</p>
+<ul class="org-ul">
+<li>This is regardless of what we want to plot</li>
+<li>We must specify a data source and a aesthetic via the aes() function</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-R">library(ggplot2)
+p1 &lt;- ggplot(data = diabetes, mapping = aes(x = bmi, y = glu))
+p1
+</pre>
+</div>
+
+<p>
+This doesn&rsquo;t make any plot yet
+</p>
+
+<div id="orgda78e25" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-34-05_screenshot.png" alt="2023-11-27_17-34-05_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org7b72fbf" class="outline-4">
+<h4 id="org7b72fbf"><span class="section-number-4">4.2.3.</span> Geometries (line, dots etc)</h4>
+<div class="outline-text-4" id="text-4-2-3">
+</div>
+<ol class="org-ol">
+<li><a id="orgf6cfbec"></a>Line and dots<br />
+<div class="outline-text-5" id="text-4-2-3-1">
+<div class="org-src-container">
+<pre class="src src-R">p1 + geom_point() + geom_line()
+</pre>
+</div>
+
+
+<div id="orgcb6a252" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-36-34_screenshot.png" alt="2023-11-27_17-36-34_screenshot.png" />
+</p>
+</div>
+</div>
+</li>
+<li><a id="org037c6bd"></a>Histogram<br />
+<div class="outline-text-5" id="text-4-2-3-2">
+<div class="org-src-container">
+<pre class="src src-R">p2 &lt;- ggplot(diabetes, aes(tc))
+p2 + geom_histogram()
+</pre>
+</div>
+
+
+<div id="org81105fb" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-47-28_screenshot.png" alt="2023-11-27_17-47-28_screenshot.png" />
+</p>
+</div>
+</div>
+</li>
+<li><a id="orgcef79a1"></a>Density<br />
+<div class="outline-text-5" id="text-4-2-3-3">
+<div class="org-src-container">
+<pre class="src src-R">p2 + geom_density()
+</pre>
+</div>
+
+
+<div id="org3eddfa7" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-49-57_screenshot.png" alt="2023-11-27_17-49-57_screenshot.png" />
+</p>
+</div>
+</div>
+</li>
+<li><a id="org2de198b"></a>Boxplot<br />
+<div class="outline-text-5" id="text-4-2-3-4">
+<div class="org-src-container">
+<pre class="src src-R">p2 + geom_histogram()
+</pre>
+</div>
+
+
+<div id="org544b02d" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-52-44_screenshot.png" alt="2023-11-27_17-52-44_screenshot.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-R">p3 &lt;- ggplot(diabetes, aes(sex, bmi))
+p3 + geom_boxplot()
+</pre>
+</div>
+
+
+<div id="orgbbad594" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-53-59_screenshot.png" alt="2023-11-27_17-53-59_screenshot.png" />
+</p>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-org07ea2e2" class="outline-4">
+<h4 id="org07ea2e2"><span class="section-number-4">4.2.4.</span> Statistics</h4>
+<div class="outline-text-4" id="text-4-2-4">
+<p>
+We can also add statistical summaries of the data.
+</p>
+<div class="org-src-container">
+<pre class="src src-R">p1 + geom_point() + geom_smooth()
+</pre>
+</div>
+
+
+<div id="org3716fb4" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-56-05_screenshot.png" alt="2023-11-27_17-56-05_screenshot.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-R">p1 + geom_point() + geom_smooth(method = "lm")
+</pre>
+</div>
+
+
+<div id="org939a4a9" class="figure">
+<p><img src="Data_Visualization/2023-11-27_17-58-08_screenshot.png" alt="2023-11-27_17-58-08_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgfbf8fbb" class="outline-4">
+<h4 id="orgfbf8fbb"><span class="section-number-4">4.2.5.</span> Styling</h4>
+<div class="outline-text-4" id="text-4-2-5">
+<p>
+Changing the style outside of aes() applies the styling to the entire plot
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="orgdca2a5b"></a>Jitter<br />
+<div class="outline-text-5" id="text-4-2-5-1">
+<div class="org-src-container">
+<pre class="src src-R">p5 &lt;- ggplot(titanic, aes(age, survived))
+p5 + geom_jitter(color = "blue", size = 2, height = 0.1)
+</pre>
+</div>
+
+
+<div id="orgcbfa224" class="figure">
+<p><img src="Data_Visualization/2023-11-27_18-02-02_screenshot.png" alt="2023-11-27_18-02-02_screenshot.png" />
+</p>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-org645eb44" class="outline-4">
+<h4 id="org645eb44"><span class="section-number-4">4.2.6.</span> Themes</h4>
+<div class="outline-text-4" id="text-4-2-6">
+<p>
+We can apply canned themes to adjust a plot overall appearance\
+Default theme:
+</p>
+<div class="org-src-container">
+<pre class="src src-R">p1.1 &lt;- p1 + geom_point()
+</pre>
+</div>
+
+
+<div id="orgd6283b4" class="figure">
+<p><img src="Data_Visualization/2023-12-29_12-20-35_screenshot.png" alt="2023-12-29_12-20-35_screenshot.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-R">p1.1 + theme_classic()
+</pre>
+</div>
+
+
+<div id="orgf7ede1c" class="figure">
+<p><img src="Data_Visualization/2023-12-29_12-22-38_screenshot.png" alt="2023-12-29_12-22-38_screenshot.png" />
+</p>
+</div>
+
+<p>
+You can also modify individual themes
+</p>
+<div class="org-src-container">
+<pre class="src src-R">p1.1 + theme_classic() +
+    theme(axis.title = element_text(size = 16,
+                                    family = "serif",
+                                    face = "bold",
+                                    color = "blue"),
+        aspect.ratio = 1)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga3b847f" class="outline-4">
+<h4 id="orga3b847f"><span class="section-number-4">4.2.7.</span> Facets</h4>
+<div class="outline-text-4" id="text-4-2-7">
+<p>
+Faceting allow us to make arrays of conditional plots.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">p7 &lt;- ggplot(titanic, aes(age, survived, color = class)) +
+    geom_jitter(height = 0.05) +
+    geom_smooth(method = "glm",
+                method.args = list(family = "binomial"),
+                se = FALSE)
+p7 + facet_wrap(vars(sex))
+</pre>
+</div>
+
+
+<div id="orgaff0bff" class="figure">
+<p><img src="Data_Visualization/2023-12-29_12-34-35_screenshot.png" alt="2023-12-29_12-34-35_screenshot.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-R">p8 &lt;- ggplot(titanic, aes(age, survived)) +
+    geom_jitter(height = 0.05) +
+    geom_smooth(method = "glm",
+                method.args = list(family = "binomial"),
+                se = FALSE)
+p8 + facet_grid(vars(sex), vars(class))
+</pre>
+</div>
+
+
+<div id="orgeadd0c9" class="figure">
+<p><img src="Data_Visualization/2023-12-29_12-38-20_screenshot.png" alt="2023-12-29_12-38-20_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org5ef07b4" class="outline-4">
+<h4 id="org5ef07b4"><span class="section-number-4">4.2.8.</span> Joining multiple Figures</h4>
+<div class="outline-text-4" id="text-4-2-8">
+<p>
+If we want to paste several different plots into a single figure (without faceting), we can use the utilities in the gridExtra package.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">library(gridExtra)
+
+grid.arrange(p1 + geom_point(),
+             p3 + geom_boxplot(),
+             p1 + geom_line(),
+             p8 + facet_grid(vars(sex), vars(class)),
+             ncol = 2)
+</pre>
+</div>
+
+
+<div id="org1aaa414" class="figure">
+<p><img src="Data_Visualization/2023-12-29_12-43-52_screenshot.png" alt="2023-12-29_12-43-52_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb8b67b9" class="outline-2">
+<h2 id="orgb8b67b9"><span class="section-number-2">5.</span> Data Cleaning</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+When we receive new data, they are generally messy and contaminated by various anomalies and errors
+</p>
+
+<p>
+One of the first steps in processing a new set of data is cleaning
+</p>
+
+<p>
+By cleaning the data, we ensure a few properties:
+</p>
+<ul class="org-ul">
+<li>The data are in an analyzable format.</li>
+<li>All data take legal values.</li>
+<li>Any outliers are located and treated.</li>
+<li>Any missing data are located and treated.</li>
+</ul>
+</div>
+<div id="outline-container-org6021009" class="outline-3">
+<h3 id="org6021009"><span class="section-number-3">5.1.</span> Missing data</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+Empty cells in a dataset where there should be observerd values
+</p>
+<ul class="org-ul">
+<li>The missing cells correspond to true population values, but we haven&rsquo;t observed those values</li>
+</ul>
+
+<p>
+Not every empty cell is a missing datum
+</p>
+<ul class="org-ul">
+<li>Quality-of-life ratings for dead patients in a mortality study</li>
+<li>Firm profitability after the company goes out of business</li>
+<li>Self-reported severity of menstrual cramping for men</li>
+<li>Empty blocks of data following “gateway” items</li>
+</ul>
+</div>
+<div id="outline-container-org0b09506" class="outline-4">
+<h4 id="org0b09506"><span class="section-number-4">5.1.1.</span> Missing Data Pattern</h4>
+<div class="outline-text-4" id="text-5-1-1">
+<p>
+Missing data patterns represent unique combinations of observerd and missing items
+</p>
+<ul class="org-ul">
+<li>\(P\) items -&gt; \(2^P\) possible patterns</li>
+</ul>
+
+
+<div id="org763cbfe" class="figure">
+<p><img src="Data_Cleaning/2023-12-29_14-07-36_screenshot.png" alt="2023-12-29_14-07-36_screenshot.png" />
+</p>
+</div>
+</div>
+<ol class="org-ol">
+<li><a id="orgc7ad841"></a>example/ in r<br />
+<div class="outline-text-5" id="text-5-1-1-1">
+<div class="org-src-container">
+<pre class="src src-R">## Load the mice library:
+library(mice)
+
+## Compute missing data patterns:
+pats &lt;- md.pattern(boys)
+
+pats
+plot_pattern(boys, rotate = TRUE)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">&#xa0;</th>
+<th scope="col" class="org-right">age</th>
+<th scope="col" class="org-right">reg</th>
+<th scope="col" class="org-right">wgt</th>
+<th scope="col" class="org-right">hgt</th>
+<th scope="col" class="org-right">bmi</th>
+<th scope="col" class="org-right">hc</th>
+<th scope="col" class="org-right">gen</th>
+<th scope="col" class="org-right">phb</th>
+<th scope="col" class="org-right">tv</th>
+<th scope="col" class="org-right">&#xa0;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">223</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+</tr>
+
+<tr>
+<td class="org-right">19</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">437</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">43</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">16</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">6</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">7</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">0</td>
+<td class="org-right">3</td>
+<td class="org-right">4</td>
+<td class="org-right">20</td>
+<td class="org-right">21</td>
+<td class="org-right">46</td>
+<td class="org-right">503</td>
+<td class="org-right">503</td>
+<td class="org-right">522</td>
+<td class="org-right">1622</td>
+</tr>
+</tbody>
+</table>
+
+
+<div id="orgb4e2967" class="figure">
+<p><img src="Data_Cleaning/2023-12-29_14-09-04_screenshot.png" alt="2023-12-29_14-09-04_screenshot.png" />
+</p>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-org63b8223" class="outline-4">
+<h4 id="org63b8223"><span class="section-number-4">5.1.2.</span> Nonresponse Rates</h4>
+<div class="outline-text-4" id="text-5-1-2">
+</div>
+<ol class="org-ol">
+<li><a id="org8869f31"></a>Proportion missing<br />
+<div class="outline-text-5" id="text-5-1-2-1">
+<ul class="org-ul">
+<li>The proportion of cells containing missing data</li>
+<li>Should be computed for each variable, not for the entire dataset</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-R">## Load the mice library:
+library(mice)
+
+## Load some example data:
+data(boys, package = "mice")
+## Compute variable-wise proportions missing:
+mMat &lt;- is.na(boys)
+mMat %&gt;% colMeans() %&gt;% round(3)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">age</th>
+<th scope="col" class="org-right">hgt</th>
+<th scope="col" class="org-right">wgt</th>
+<th scope="col" class="org-right">bmi</th>
+<th scope="col" class="org-right">hc</th>
+<th scope="col" class="org-right">gen</th>
+<th scope="col" class="org-right">phb</th>
+<th scope="col" class="org-right">tv</th>
+<th scope="col" class="org-right">reg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0.000</td>
+<td class="org-right">0.027</td>
+<td class="org-right">0.005</td>
+<td class="org-right">0.028</td>
+<td class="org-right">0.061</td>
+<td class="org-right">0.672</td>
+<td class="org-right">0.672</td>
+<td class="org-right">0.698</td>
+<td class="org-right">0.004</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">## Compute observation-wise proportions missing:
+pmRow &lt;- rowMeans(mMat)
+## Summarize the above:
+range(pmRow)
+# [1] 0.0000000 0.7777778
+
+pmRow[pmRow &gt; 0] %&gt;% range()
+# [1] 0.1111111 0.7777778
+
+median(pmRow)
+# [1] 0.3333333
+
+## Compute the proportion of complete cases:
+mean(pmRow == 0)
+# [1] 0.2981283
+</pre>
+</div>
+</div>
+</li>
+<li><a id="org74dce60"></a>Attrition Rate<br />
+<div class="outline-text-5" id="text-5-1-2-2">
+<ul class="org-ul">
+<li>The proportion of participants that drop-out of a study at each measurement occasion</li>
+</ul>
+</div>
+</li>
+<li><a id="orga1cb07e"></a>Covariance Coverage<br />
+<div class="outline-text-5" id="text-5-1-2-3">
+<ul class="org-ul">
+<li>The proportion of cases available to estimate a given pairwise relationship
+<ul class="org-ul">
+<li>e.g. a convariance between two variables</li>
+</ul></li>
+<li>Very important to have adequate coverage for the parameters you want to estimate</li>
+</ul>
+
+<p>
+We can use routines from the mice package to calculate covariance coverage and response patterns.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">## Compute the covariance coverage:
+cc &lt;- md.pairs(boys)$rr / nrow(boys)
+## Check the result:
+round(cc, 2)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">&#xa0;</th>
+<th scope="col" class="org-right">age</th>
+<th scope="col" class="org-right">hgt</th>
+<th scope="col" class="org-right">wgt</th>
+<th scope="col" class="org-right">bmi</th>
+<th scope="col" class="org-right">hc</th>
+<th scope="col" class="org-right">gen</th>
+<th scope="col" class="org-right">phb</th>
+<th scope="col" class="org-right">tv</th>
+<th scope="col" class="org-right">reg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">age</td>
+<td class="org-right">1.00</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.99</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.94</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.3</td>
+<td class="org-right">1.00</td>
+</tr>
+
+<tr>
+<td class="org-left">hgt</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.92</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.3</td>
+<td class="org-right">0.97</td>
+</tr>
+
+<tr>
+<td class="org-left">wgt</td>
+<td class="org-right">0.99</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.99</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.94</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.3</td>
+<td class="org-right">0.99</td>
+</tr>
+
+<tr>
+<td class="org-left">bmi</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.91</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.3</td>
+<td class="org-right">0.97</td>
+</tr>
+
+<tr>
+<td class="org-left">hc</td>
+<td class="org-right">0.94</td>
+<td class="org-right">0.92</td>
+<td class="org-right">0.94</td>
+<td class="org-right">0.91</td>
+<td class="org-right">0.94</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.3</td>
+<td class="org-right">0.93</td>
+</tr>
+
+<tr>
+<td class="org-left">gen</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.3</td>
+<td class="org-right">0.33</td>
+</tr>
+
+<tr>
+<td class="org-left">phb</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.32</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.3</td>
+<td class="org-right">0.33</td>
+</tr>
+
+<tr>
+<td class="org-left">tv</td>
+<td class="org-right">0.30</td>
+<td class="org-right">0.30</td>
+<td class="org-right">0.30</td>
+<td class="org-right">0.30</td>
+<td class="org-right">0.30</td>
+<td class="org-right">0.30</td>
+<td class="org-right">0.30</td>
+<td class="org-right">0.3</td>
+<td class="org-right">0.30</td>
+</tr>
+
+<tr>
+<td class="org-left">reg</td>
+<td class="org-right">1.00</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.99</td>
+<td class="org-right">0.97</td>
+<td class="org-right">0.93</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.33</td>
+<td class="org-right">0.3</td>
+<td class="org-right">1.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-org15aaa47" class="outline-4">
+<h4 id="org15aaa47"><span class="section-number-4">5.1.3.</span> Visualizing Incomplete Data</h4>
+<div class="outline-text-4" id="text-5-1-3">
+<p>
+The ggmice package provides some nice ways to visualize incomplete data and objects created during missing data treatment.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">library(ggmice); library(ggplot2)
+ggmice(boys, aes(wgt, hgt)) + geom_point()
+</pre>
+</div>
+
+
+<div id="org693bb22" class="figure">
+<p><img src="Data_Cleaning/2023-12-29_15-44-49_screenshot.png" alt="2023-12-29_15-44-49_screenshot.png" />
+</p>
+</div>
+
+<p>
+We can also create a nicer version of the response pattern plot.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">plot_pattern(boys, rotate = TRUE)
+</pre>
+</div>
+
+
+<div id="orgce4c45d" class="figure">
+<p><img src="Data_Cleaning/2023-12-29_14-09-04_screenshot.png" alt="2023-12-29_14-09-04_screenshot.png" />
+</p>
+</div>
+
+<p>
+The naniar package also provides some nice visualization and numerical summary routines for incomplete data.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">naniar::gg_miss_upset(boys)
+</pre>
+</div>
+
+
+<div id="orgf20c56f" class="figure">
+<p><img src="Data_Cleaning/2023-12-29_16-04-49_screenshot.png" alt="2023-12-29_16-04-49_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org38abcc6" class="outline-3">
+<h3 id="org38abcc6"><span class="section-number-3">5.2.</span> Outliers</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+We only consider univariate (<i>:only involving one variable</i>) outliers
+</p>
+<ul class="org-ul">
+<li>Extreme values with respect to the distribution of a variable&rsquo;s other observations
+<ul class="org-ul">
+<li>A human height measurement of 3 meters</li>
+<li>Student with a income of $250,000</li>
+</ul></li>
+<li>Not accounting for any particular model</li>
+</ul>
+
+<p>
+A univariate outlier may, or may not be an illegal value
+</p>
+<ul class="org-ul">
+<li>Data entry errors are probably the most common cause</li>
+<li>Outliers can also be legal, but extreme, values</li>
+</ul>
+
+<p>
+Key Point: We choose to view an outlier as arising from a different population than the one to which we want to generalize our findings to
+</p>
+</div>
+<div id="outline-container-org6bff38c" class="outline-4">
+<h4 id="org6bff38c"><span class="section-number-4">5.2.1.</span> Finding outliers: Boxplot Method</h4>
+<div class="outline-text-4" id="text-5-2-1">
+<p>
+Tukey (1977) described a procedure for flagging potential outliers based on a box-and-whiskers plot.
+</p>
+<ul class="org-ul">
+<li>Does not require normally distributed X</li>
+<li>Not sensitive to outliers</li>
+</ul>
+
+<p>
+A <b>fence</b> is an interval defined as the following function of the <b>first quartile</b>, the <b>third quartile</b>, and the <b>inner quartile</b> range \((IQR=Q_3-Q_1)\):
+\[F=\{Q_1-C\times IQR,\ Q_3+C\times IQR\}\]
+</p>
+<ul class="org-ul">
+<li>Taking C = 1.5 produces the inner fence</li>
+<li>Taking C = 3.0 produces the outer fence</li>
+</ul>
+
+<p>
+We can use these fences to indentify potential outliers:
+</p>
+<ul class="org-ul">
+<li>Any value that falls outside of the inner fence is a possible outlier</li>
+<li>Any value that falls outside of the inner fence is a probable outlier</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgb00cc09" class="outline-4">
+<h4 id="orgb00cc09"><span class="section-number-4">5.2.2.</span> Boxplot in R</h4>
+<div class="outline-text-4" id="text-5-2-2">
+<div class="org-src-container">
+<pre class="src src-R">## Find potentially outlying cases:
+(out &lt;- boys %$% boxplot.stats(bmi, coef = 3)$out)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">30.62 31.34 31.74</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">## Which observations are potential outliers?
+boys %$% which(bmi %in% out)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">574 668 733</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">## View the potentially outlying cases:
+boys %&gt;% filter(bmi %in% out)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">&#xa0;</th>
+<th scope="col" class="org-right">age</th>
+<th scope="col" class="org-right">hgt</th>
+<th scope="col" class="org-right">wgt</th>
+<th scope="col" class="org-right">bmi</th>
+<th scope="col" class="org-right">hc</th>
+<th scope="col" class="org-left">gen</th>
+<th scope="col" class="org-left">phb</th>
+<th scope="col" class="org-right">tv</th>
+<th scope="col" class="org-left">reg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">15.493</td>
+<td class="org-right">182.5</td>
+<td class="org-right">102.0</td>
+<td class="org-right">30.62</td>
+<td class="org-right">57.7</td>
+<td class="org-left">&lt;NA&gt;</td>
+<td class="org-left">&lt;NA&gt;</td>
+<td class="org-right">NA</td>
+<td class="org-left">west</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">17.749</td>
+<td class="org-right">174.0</td>
+<td class="org-right">94.9</td>
+<td class="org-right">31.34</td>
+<td class="org-right">56.3</td>
+<td class="org-left">G5</td>
+<td class="org-left">P5</td>
+<td class="org-right">25</td>
+<td class="org-left">west</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">19.926</td>
+<td class="org-right">192.3</td>
+<td class="org-right">117.4</td>
+<td class="org-right">31.74</td>
+<td class="org-right">57.6</td>
+<td class="org-left">G5</td>
+<td class="org-left">P6</td>
+<td class="org-right">18</td>
+<td class="org-left">north</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-orgc648cf8" class="outline-4">
+<h4 id="orgc648cf8"><span class="section-number-4">5.2.3.</span> Breakdown Point</h4>
+<div class="outline-text-4" id="text-5-2-3">
+<p>
+To compare statistics, we consider their breakdown points.
+</p>
+<ul class="org-ul">
+<li>The breakdown point is the minimum proportion of cases that must be replaced by ∞ to cause the value of the statistic to go to ∞.</li>
+</ul>
+
+<p>
+The mean has a breakdown point of 1/N.
+</p>
+<ul class="org-ul">
+<li>Replacing a single value with ∞ will produce an infinite mean.</li>
+<li>This is why we shouldn’t use basic z-scores to find outliers.</li>
+</ul>
+
+<p>
+The median has breakdown point of 50%.
+</p>
+<ul class="org-ul">
+<li>We can replace n &lt; N/2 of the observations with ∞ without producing an infinite median.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org7867dc0" class="outline-4">
+<h4 id="org7867dc0"><span class="section-number-4">5.2.4.</span> Outliers for Categorical Data</h4>
+<div class="outline-text-4" id="text-5-2-4">
+<p>
+Nominal, ordinal, and binary items can have outliers
+</p>
+<ul class="org-ul">
+<li>Outliers on categorical variables are often more indicative of bad variables than outlying cases.</li>
+</ul>
+
+<p>
+Ordinal
+</p>
+<ul class="org-ul">
+<li>Most participant endorse one of the lowest categories on an ordinal item, but a few participants endorse the highest category.</li>
+<li>The participants who endorse the highest category may be outliers.</li>
+</ul>
+
+<p>
+Nominal
+</p>
+<ul class="org-ul">
+<li>Groups with very low membership may be outliers on nominal grouping variables.</li>
+</ul>
+
+<p>
+Binary
+</p>
+<ul class="org-ul">
+<li>If most endorse the item, the few who do not may be outliers.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org16826e2" class="outline-4">
+<h4 id="org16826e2"><span class="section-number-4">5.2.5.</span> Treating outliers</h4>
+<div class="outline-text-4" id="text-5-2-5">
+<p>
+If we locate any outliers, they must be treated.
+</p>
+<ul class="org-ul">
+<li>Outliers cause by errors, mistakes, or malfunctions (i.e., error outliers) should be directly corrected.</li>
+<li>Labeling non-error outliers is a subjective task.
+<ul class="org-ul">
+<li>A (non-error) outlier must originate from a population separate from the one we care about.</li>
+<li>Don’t blindly automate the decision process.</li>
+</ul></li>
+</ul>
+
+<p>
+The most direct solution is to delete any outlying observation.
+</p>
+<ul class="org-ul">
+<li>If you delete non-error outliers, the analysis should be reported twice: with outliers and without.</li>
+</ul>
+<p>
+For univariate outliers, we can use less extreme types of deletion.
+</p>
+<ul class="org-ul">
+<li>Delete outlying values (but not the entire observation).</li>
+<li>These empty cells then become missing data.</li>
+<li>Treat the missing values along with any naturally-occurring nonresponse.</li>
+</ul>
+
+<p>
+<b>Winsorization:</b>
+</p>
+<ul class="org-ul">
+<li>Replace the outliers with the nearest non-outlying value</li>
+</ul>
+
+<p>
+We can also use robust regression procedures to estimate the model directly in the presence of outliers.
+</p>
+
+<p>
+Weight the objective function to reduce the impact of outliers
+</p>
+<ul class="org-ul">
+<li>M-estimation</li>
+</ul>
+
+<p>
+Trim outlying observations during estimation
+</p>
+<ul class="org-ul">
+<li>Least trimmed squares, MCD, MVE</li>
+</ul>
+
+<p>
+Take the median, instead of the mean, of the squared residuals
+</p>
+<ul class="org-ul">
+<li>Least median of squares</li>
+</ul>
+
+<p>
+Model some quantile of the DV’s distribution instead of the mean
+</p>
+<ul class="org-ul">
+<li>Quantile regression</li>
+</ul>
+
+<p>
+Model the outcome with a heavy-tailed distribution
+</p>
+<ul class="org-ul">
+<li>Laplacian, Student’s T</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb999204" class="outline-2">
+<h2 id="orgb999204"><span class="section-number-2">6.</span> Introduction to Linear Modeling</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-org592088a" class="outline-3">
+<h3 id="org592088a"><span class="section-number-3">6.1.</span> Simple Linear Regression</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+Best fit line is defined by a simple equation:
+</p>
+\begin{equation}
+\hat Y = \hat \beta_o+\hat\beta_1X
+\end{equation}
+</div>
+<div id="outline-container-orgb45f2a4" class="outline-4">
+<h4 id="orgb45f2a4"><span class="section-number-4">6.1.1.</span> Thinking about error</h4>
+<div class="outline-text-4" id="text-6-1-1">
+<p>
+The above equation only describes the best fit line.
+We need to account for the estimation error
+</p>
+    \begin{equation}
+Y = \hat \beta_o+\hat\beta_1X +\hat\epsilon
+\end{equation}
+</div>
+</div>
+<div id="outline-container-orgfd352d0" class="outline-4">
+<h4 id="orgfd352d0"><span class="section-number-4">6.1.2.</span> Estimating the Regression Coefficients</h4>
+<div class="outline-text-4" id="text-6-1-2">
+<p>
+Minimize the sum of squared residuals
+</p>
+\begin{equation}
+RSS =\sum^N_{n=1} \hat \epsilon^2_n
+\end{equation}
+
+<p>
+\(\hat \epsilon_n=Y_n-\hat Y_n\)
+</p>
+</div>
+</div>
+<div id="outline-container-org9afc8da" class="outline-4">
+<h4 id="org9afc8da"><span class="section-number-4">6.1.3.</span> Model Fit, measures, r-squared</h4>
+<div class="outline-text-4" id="text-6-1-3">
+<p>
+We may also want to know how well our model explains the outcome.
+</p>
+<ul class="org-ul">
+<li>Our model explains some proportion of the outcome’s variability.</li>
+<li>The residual variance ˆ𝜎2 = Var(ˆ𝜀) will be less than Var(Y)</li>
+</ul>
+
+<p>
+We quantify the proportion of the outcome’s variance that is explained by our model using the R2 statistic
+</p>
+
+\begin{equation}
+R^2=\frac{TSS-RSS}{TSS}=1-\frac{RSS}{TSS}
+\end{equation}
+
+\begin{equation}
+TSS=\sum^N_{n=1}(Y_n-\bar Y)^2=Var(Y)\times(N-1)
+\end{equation}
+<p>
+\(\bar y\) is average of y
+</p>
+
+
+<p>
+When assessing predictive performance, we will most often use the mean squared error as our criterion.
+</p>
+
+\begin{equation}
+MSE=\frac 1 N \sum^N_{n=1}(Y_n-\hat Y_n)^2=\frac {RSS} N
+\end{equation}
+<p>
+MSE is better to use when we want to predict, so we dont care about explenation.
+</p>
+
+<p>
+\[RMSE = \sqrt{MSE}\]
+</p>
+</div>
+</div>
+<div id="outline-container-org10b32c5" class="outline-4">
+<h4 id="org10b32c5"><span class="section-number-4">6.1.4.</span> Information Criteria</h4>
+<div class="outline-text-4" id="text-6-1-4">
+<p>
+We can use information criteria to quickly compare non-nested models while accounting for model complexity.
+</p>
+
+
+<div id="org0611784" class="figure">
+<p><img src="Introduction_to_Linear_Modeling/2023-12-04_17-46-19_screenshot.png" alt="2023-12-04_17-46-19_screenshot.png" />
+</p>
+</div>
+
+<p>
+Information criteria balance two competing forces.
+</p>
+<ul class="org-ul">
+<li>Blue: The optimized loglikelihood quantifies fit to the data.</li>
+<li>Red: The penalty term corrects for model complexity</li>
+</ul>
+
+<p>
+K number of parameters, amount of x variables in this case
+</p>
+
+<p>
+These statistics are only interesting for comparing models, on their on they don&rsquo;t say a lot
+</p>
+</div>
+</div>
+<div id="outline-container-orgd164b5c" class="outline-4">
+<h4 id="orgd164b5c"><span class="section-number-4">6.1.5.</span> In R</h4>
+<div class="outline-text-4" id="text-6-1-5">
+<div class="org-src-container">
+<pre class="src src-R">out1 &lt;- lm(bp ~ age, data = dDat)
+coef(out1) -- get coefficients
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org83c4c5a" class="outline-3">
+<h3 id="org83c4c5a"><span class="section-number-3">6.2.</span> Multiple Linear Regression</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+Just simple linear regression with multiple predictor variables.
+</p>
+</div>
+<div id="outline-container-orge122788" class="outline-4">
+<h4 id="orge122788"><span class="section-number-4">6.2.1.</span> Comparing models/ multiple R<sup>2</sup>/ f statistic</h4>
+<div class="outline-text-4" id="text-6-2-1">
+</div>
+<ol class="org-ol">
+<li><a id="orgd6d1c0f"></a>Multiple R<sup>2</sup><br />
+<div class="outline-text-5" id="text-6-2-1-1">
+<div class="org-src-container">
+<pre class="src src-R">out1 &lt;- lm(bp ~ age, data = dDat)
+out2 &lt;- lm(bp ~ age + bmi, data = dDat)
+
+## Extract R^2 values:
+r2.1 &lt;- summary(out1)$r.squared
+r2.2 &lt;- summary(out2)$r.squared
+</pre>
+</div>
+</div>
+</li>
+<li><a id="orgf1c7255"></a>F-statistic/null hypothesis<br />
+<div class="outline-text-5" id="text-6-2-1-2">
+<p>
+We test if the fact that the r squard is bigger is conincedence or not
+</p>
+
+<p>
+We use the F-statistic to test \(H_0:R^2=0\) vs. \(H_1:R^2>0\).
+</p>
+<div class="org-src-container">
+<pre class="src src-R">1 &lt;- summary(out1)$fstatistic
+f1
+value numdf dendf
+55.78116 1.00000 440.00000
+pf(q = f1[1], df1 = f1[2], df2 = f1[3], lower.tail = FALSE)
+</pre>
+</div>
+
+<p>
+value
+4.392569e-13
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">f2 &lt;- summary(out2)$fstatistic
+f2
+value numdf dendf
+64.6647 2.0000 439.0000
+pf(f2[1], f2[2], f2[3], lower.tail = FALSE)
+</pre>
+</div>
+
+<p>
+value
+2.433518e-25
+</p>
+
+<p>
+How do we quantify the additional variation explained by BMI, above
+and beyond age?
+• Compute the ΔR2
+</p>
+<div class="org-src-container">
+<pre class="src src-R">## Compute change in R^2:
+r2.2 - r2.1
+</pre>
+</div>
+
+<p>
+[1] 0.115049
+</p>
+
+<p>
+How do we know if ΔR2 represents a significantly greater degree of
+explained variation?
+• Use an F-test for H0 : ΔR2 = 0 vs. H1 : ΔR2 &gt; 0
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">## Compute change in R^2:
+r2.2 - r2.1
+</pre>
+</div>
+
+<p>
+[1] 0.115049
+</p>
+
+<p>
+How do we know if ΔR2 represents a significantly greater degree of
+explained variation?
+• Use an F-test for H0 : ΔR2 = 0 vs. H1 : ΔR2 &gt; 0
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">## Is that increase significantly greater than zero?
+anova(out1, out2)
+</pre>
+</div>
+
+<p>
+Analysis of Variance Table
+Model 1: bp ~ age
+Model 2: bp ~ age + bmi
+Res.Df RSS Df Sum of Sq F Pr(&gt;F)
+1 440 74873
+2 439 65167 1 9706.1 65.386 6.057e-15 <b>*</b>
+&#x2014;
+Signif. codes:
+0 &rsquo;<b>*</b>&rsquo; 0.001 &rsquo;<b>*&rsquo; 0.01 &rsquo;</b>&rsquo; 0.05 &rsquo;.&rsquo; 0.1 &rsquo; &rsquo; 1
+</p>
+</div>
+</li>
+<li><a id="orga5d1d9f"></a>Comparing models with MSE<br />
+<div class="outline-text-5" id="text-6-2-1-3">
+<p>
+We can also compare models based on their prediction errors.
+• For OLS regression, we usually compare MSE values.
+</p>
+<div class="org-src-container">
+<pre class="src src-R">mse1 &lt;- MSE(y_pred = predict(out1), y_true = dDat$bp)
+mse2 &lt;- MSE(y_pred = predict(out2), y_true = dDat$bp)
+mse1
+# [1] 169.3963
+mse2
+# [1] 147.4367
+</pre>
+</div>
+<p>
+In this case, the MSE for the model with BMI included is smaller.
+• We should prefer the the larger model.
+</p>
+</div>
+</li>
+<li><a id="org83450f0"></a>Comparing models with information criteria<br />
+<div class="outline-text-5" id="text-6-2-1-4">
+<p>
+Finally, we can compare models based on information criteria.
+</p>
+<div class="org-src-container">
+<pre class="src src-R">AIC(out1, out2)
+# df AIC
+# out1 3 3528.792
+# out2 4 3469.424
+BIC(out1, out2)
+# df BIC
+# out1 3 3541.066
+# out2 4 3485.789
+</pre>
+</div>
+<p>
+In this case, both the AIC and the BIC for the model with BMI included
+are smaller.
+• We should prefer the the larger model.
+</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgccf947c" class="outline-3">
+<h3 id="orgccf947c"><span class="section-number-3">6.3.</span> Categorical Predictors</h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+Categorical predictors have to be converted to dummy codes:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">drink</td>
+<td class="org-right">juice</td>
+<td class="org-right">tea</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">juice</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">coffee</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-left">tea</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-left">tea</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+</tr>
+</tbody>
+</table>
+<p>
+Then these dummy variables can simply be used as normally:
+\[Y=\beta_0+\beta_1X_{juice}+\beta_2X_{tea}+\epsilon\]
+</p>
+</div>
+<div id="outline-container-org73a6111" class="outline-4">
+<h4 id="org73a6111"><span class="section-number-4">6.3.1.</span> Contrast</h4>
+<div class="outline-text-4" id="text-6-3-1">
+<p>
+All R factors have an associated contrasts attribute.
+• The contrasts define a coding to represent the grouping information.
+• Modeling functions code the factors using the rules defined by the contrasts.
+</p>
+<div class="org-src-container">
+<pre class="src src-R">x &lt;- factor(c("a", "b", "c"))
+contrasts(x)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">b</td>
+<td class="org-right">c</td>
+</tr>
+
+<tr>
+<td class="org-left">a</td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+</tr>
+
+<tr>
+<td class="org-left">b</td>
+<td class="org-right">1</td>
+<td class="org-right">0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org7b2ac52" class="outline-4">
+<h4 id="org7b2ac52"><span class="section-number-4">6.3.2.</span> Significane Testing</h4>
+<div class="outline-text-4" id="text-6-3-2">
+<p>
+For variables with only two levels, we can test the overall factor’s
+significance by evaluating the significance of a single dummy code.
+</p>
+<div class="org-src-container">
+<pre class="src src-R">out &lt;- lm(Price ~ Man.trans.avail, data = Cars93)
+partSummary(out, -c(1, 2))
+# Coefficients:
+# Estimate Std. Error t value Pr(&gt;|t|)
+# (Intercept) 23.841 1.623 14.691 &lt;2e-16
+# Man.trans.availYes -6.603 2.004 -3.295 0.0014
+# Residual standard error: 9.18 on 91 degrees of freedom
+# Multiple R-squared: 0.1066,Adjusted R-squared: 0.09679
+# F-statistic: 10.86 on 1 and 91 DF, p-value: 0.001403
+</pre>
+</div>
+
+<p>
+For variables with more than two levels, we need to simultaneously evaluate the significance of each of the variable’s dummy codes
+</p>
+<div class="org-src-container">
+<pre class="src src-R">partSummary(out4, -c(1, 2))
+# Coefficients:
+# Estimate Std. Error t value Pr(&gt;|t|)
+# (Intercept) 21.7187 2.9222 7.432 6.25e-11
+# Man.trans.availYes -5.8410 1.8223 -3.205 0.00187
+# DriveTrainFront -0.2598 2.8189 -0.092 0.92677
+# DriveTrainRear 10.5169 3.3608 3.129 0.00237
+# Residual standard error: 8.314 on 89 degrees of freedom
+# Multiple R-squared: 0.2834,Adjusted R-squared: 0.2592
+# F-statistic: 11.73 on 3 and 89 DF, p-value: 1.51e-06
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-R">summary(out4)$r.squared - summary(out)$r.squared
+# [1] 0.1767569
+# anova(out, out4)
+# Analysis of Variance Table
+# Model 1: Price ~ Man.trans.avail
+# Model 2: Price ~ Man.trans.avail + DriveTrain
+# Res.Df RSS Df Sum of Sq F Pr(&gt;F)
+# 1 91 7668.9
+# 2 89 6151.6 2 1517.3 10.976 5.488e-05 ***
+# ---
+# Signif. codes:
+# 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org5ca07e5" class="outline-3">
+<h3 id="org5ca07e5"><span class="section-number-3">6.4.</span> Model-Based Prediction</h3>
+<div class="outline-text-3" id="text-6-4">
+</div>
+<div id="outline-container-org35d33a9" class="outline-4">
+<h4 id="org35d33a9"><span class="section-number-4">6.4.1.</span> Prediction example</h4>
+<div class="outline-text-4" id="text-6-4-1">
+
+<div id="org92364a4" class="figure">
+<p><img src="Introduction_to_Linear_Modeling/2023-12-09_14-20-49_screenshot.png" alt="2023-12-09_14-20-49_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org5ec569f" class="outline-4">
+<h4 id="org5ec569f"><span class="section-number-4">6.4.2.</span> Interval estimates for prediction</h4>
+<div class="outline-text-4" id="text-6-4-2">
+<p>
+To quantify uncertainty in our predictions, we want to use an appropriate interval estimate:
+There are two flavors:
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="org41591a0"></a>Confidence interval for \(\hat Y_m\)<br />
+<div class="outline-text-5" id="text-6-4-2-1">
+<p>
+The CI for ˆYm gives a likely range (in the sense of coverage probability and “confidence”) for the mth value of the true conditional mean.
+</p>
+
+<p>
+CIs only account for uncertainty in the estimated regression coefficients, { ˆ𝛽0, ˆ𝛽p}.
+</p>
+</div>
+</li>
+<li><a id="orgfdf4e30"></a>Prediction intervals for a specif observation, \(Y_m\)<br />
+<div class="outline-text-5" id="text-6-4-2-2">
+<p>
+The prediction interval for Ym gives a likely range (in the same sense as CIs) for the mth outcome value.
+</p>
+
+<p>
+Prediction intervals also account for the regression errors, 𝜀.
+</p>
+</div>
+</li>
+<li><a id="orgbf98dcf"></a>Confidence vs prediction intervals<br />
+<div class="outline-text-5" id="text-6-4-2-3">
+<p>
+CIs for \(\hat Y\) ignore the errors, \(\epsilon\).
+</p>
+<ul class="org-ul">
+<li>Only accounts for the best fit</li>
+</ul>
+
+<p>
+Prediction intervals are wider than CIs.
+</p>
+<ul class="org-ul">
+<li>They account for the additional uncertainty contributed by 𝜀.</li>
+</ul>
+
+
+<div id="org8202e96" class="figure">
+<p><img src="Introduction_to_Linear_Modeling/2023-12-09_14-34-27_screenshot.png" alt="2023-12-09_14-34-27_screenshot.png" />
+</p>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgea06d14" class="outline-3">
+<h3 id="orgea06d14"><span class="section-number-3">6.5.</span> Moderation</h3>
+<div class="outline-text-3" id="text-6-5">
+<p>
+Additive models allow us to examine the partial effects of several predictors on some outcome.
+</p>
+<ul class="org-ul">
+<li>The effect of one predictor does not change based on the values of other predictors</li>
+</ul>
+
+<p>
+<b>Moderation</b> allows us to ask when one variable, X, affects another variable, Y.
+</p>
+<ul class="org-ul">
+<li>We&rsquo;re considering the conditional effects of X on Y given certain levels of a third variable Z.</li>
+<li>How much a variable effects the outcome is dependent on another variable</li>
+</ul>
+</div>
+<div id="outline-container-org65501df" class="outline-4">
+<h4 id="org65501df"><span class="section-number-4">6.5.1.</span> Additive regression + derivation</h4>
+<div class="outline-text-4" id="text-6-5-1">
+<p>
+In addtive MLR we have the following equation:
+\(Y=\beta_0+\beta_1X+\beta_2Z+\epsilon\)
+This equation assumes that X and Z are independent predictors of Y.
+</p>
+
+<p>
+When X and Z are independent predictors, the following are true
+</p>
+<ul class="org-ul">
+<li>X and Z can be correlated</li>
+<li>\(\beta_1\) and \(\beta_2\) are partial regression coefficients</li>
+<li>The effect of X and Y is the same at all levels of Z, and the effect of Z on Y is the same at all levels of X.</li>
+</ul>
+
+<p>
+When testing the moderation, we hypothesize that the effect of X on Y varies af a function of Z.
+</p>
+<ul class="org-ul">
+<li>\(Y=\beta_0+f(Z)X+\beta_2Z+\epsilon\)</li>
+</ul>
+
+<p>
+If we assume that Z linearly affects the relationship between X and Y:
+</p>
+<ul class="org-ul">
+<li>\(f(Z)=\beta_1+\beta_3Z\)</li>
+</ul>
+
+<p>
+Combining the two equations:
+</p>
+<ul class="org-ul">
+<li>\(Y=\beta_0+(\beta_1+\beta_3Z)X+\beta_2Z+\epsilon\)</li>
+<li>\(Y=\beta_0+\beta_1X+\beta_2Z+\beta_3XZ+\epsilon\)</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org14c6356" class="outline-4">
+<h4 id="org14c6356"><span class="section-number-4">6.5.2.</span> Test for moderation</h4>
+<div class="outline-text-4" id="text-6-5-2">
+<p>
+\(Y=\beta_0+\beta_1X+\beta_2Z+\beta_3XZ+\epsilon\)
+</p>
+
+<p>
+To test for moderation we simply need to test the significan of the interaction term, XZ
+</p>
+
+<p>
+\(\hat\beta_3\) quantifies the effect of Z on the focal effect (the X-&gt;Y effect)
+</p>
+<ul class="org-ul">
+<li>For a unit change in Z, it is the expected change in the effect of X and Y</li>
+</ul>
+
+<p>
+\(\hat\beta_1\text{ and } \hat\beta_2\) are conditional effects.
+</p>
+<ul class="org-ul">
+<li>interpreted where the other predictor is zero</li>
+<li>For a unit change in X, ˆ𝛽1 is the expected change in Y, when Z = 0.</li>
+<li>For a unit change in Z, ˆ𝛽2 is the expected change in Y, when X = 0.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgdb87ec3" class="outline-4">
+<h4 id="orgdb87ec3"><span class="section-number-4">6.5.3.</span> in R</h4>
+<div class="outline-text-4" id="text-6-5-3">
+<div class="org-src-container">
+<pre class="src src-R">## Load data:
+socSup &lt;- readRDS(paste0(dataDir, "social_support.rds"))
+## Estimate the moderated regression model:
+out &lt;- lm(bdi ~ tanSat * sex, data = socSup)
+partSummary(out, -c(1, 2))
+
+# Coefficients:
+# Estimate Std. Error t value Pr(&gt;|t|)
+# (Intercept) 20.8478 6.2114 3.356 0.00115
+# tanSat -0.5772 0.3614 -1.597 0.11372
+# sexmale 14.3667 12.2054 1.177 0.24223
+# tanSat:sexmale -0.9482 0.7177 -1.321 0.18978
+# Residual standard error: 9.267 on 91 degrees of freedom
+# Multiple R-squared: 0.08955,Adjusted R-squared: 0.05954
+# F-statistic: 2.984 on 3 and 91 DF, p-value: 0.03537
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf93f4e4" class="outline-2">
+<h2 id="orgf93f4e4"><span class="section-number-2">7.</span> Regression Assumptions and Diagnostics</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+You always have to make same assumptions to create a model.
+</p>
+</div>
+<div id="outline-container-org0d3dd3f" class="outline-3">
+<h3 id="org0d3dd3f"><span class="section-number-3">7.1.</span> Assumptions of MLR</h3>
+<div class="outline-text-3" id="text-7-1">
+</div>
+<div id="outline-container-orgcaa7c9e" class="outline-4">
+<h4 id="orgcaa7c9e"><span class="section-number-4">7.1.1.</span> 1 The model is linear in the parameters</h4>
+<div class="outline-text-4" id="text-7-1-1">
+<p>
+This is OK: \(Y=\beta_0+\beta_1X+\beta_2Z+\beta_3XZ+\beta_4X^2+\beta_5X^3\)
+</p>
+
+<p>
+This is not: \(Y=\beta_0X^{\beta_1}+\epsilon\)
+</p>
+<ul class="org-ul">
+<li>power is also a parameter here -&gt; not allowed</li>
+</ul>
+
+<p>
+If the model is not linear in the parameters, then we’re not even working with linear regression.
+</p>
+<ul class="org-ul">
+<li>We need to move to entirely different modeling paradigm</li>
+</ul>
+
+<p>
+Each modeled X must exhibit a linear relation with Y.
+</p>
+<ul class="org-ul">
+<li>We can define X via nonlinear transformations of the original data.</li>
+</ul>
+</div>
+<ol class="org-ol">
+<li><a id="org2499aba"></a>residuals plots<br />
+<div class="outline-text-5" id="text-7-1-1-1">
+<div class="org-src-container">
+<pre class="src src-R">out1 &lt;- lm(MPG ~ Horsepower,
+    data = Cars93)
+plot(Cars93$MPG, Cars93$Horsepower)
+plot(out1, 1)
+</pre>
+</div>
+
+<p>
+In multiple regression models, basic residual plots won’t tell us which predictors exhibit nonlinear associations.
+</p>
+</div>
+</li>
+<li><a id="org45dfb60"></a>Component + residuals plots<br />
+<div class="outline-text-5" id="text-7-1-1-2">
+<p>
+We can use Component + Residual Plots (AKA, partial residual plots) to visualize the unique effects of each X variable.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">library(car)
+crPlots(out3)
+</pre>
+</div>
+</div>
+</li>
+<li><a id="orgf72bbdc"></a>Treating Residual Nonlinearity<br />
+<div class="outline-text-5" id="text-7-1-1-3">
+<p>
+Nonlinearity in the residual plots is usually a sign of either:
+</p>
+<ol class="org-ol">
+<li>Model misspecification</li>
+<li>Influential observations</li>
+</ol>
+
+<p>
+This type of model misspecification usually implies omitted functions of
+modeled variables.
+</p>
+<ul class="org-ul">
+<li>Polynomial terms</li>
+<li>Interactions</li>
+</ul>
+
+<p>
+The solution is to include the omitted term into the model and refit.
+</p>
+<ul class="org-ul">
+<li>This is very much easier said than done.</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-org19afde2" class="outline-4">
+<h4 id="org19afde2"><span class="section-number-4">7.1.2.</span> 2 The predictor matrix is full rank</h4>
+<div class="outline-text-4" id="text-7-1-2">
+<ul class="org-ul">
+<li>\(N>P\)</li>
+<li>No \(X_p\) can be a linear combination of other predictors</li>
+</ul>
+
+<p>
+If the predictor matrix is not full rank, the model is not estimable.
+</p>
+<ul class="org-ul">
+<li>The parameter estimates cannot be uniquely determined from the data</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org7d8cdae" class="outline-4">
+<h4 id="org7d8cdae"><span class="section-number-4">7.1.3.</span> 3 The predictors are strictly exogenous</h4>
+<div class="outline-text-4" id="text-7-1-3">
+<p>
+The predictors do not correlate with the errors
+</p>
+<ul class="org-ul">
+<li>\(Cov(\hat Y,\epsilon)=0\)</li>
+<li>\(E[\epsilon_n]=0\)</li>
+</ul>
+
+<p>
+If the predictors are not exogenous, the estimated regression coefficients will be biased.
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="org95882b2"></a>Omitted variables<br />
+<div class="outline-text-5" id="text-7-1-3-1">
+<p>
+The most common cause of endogeneity (i.e., violating Assumption 3) is omitted variable bias.
+</p>
+<ul class="org-ul">
+<li>If we leave an important predictor variable out of our equation, some modeled predictors will become endogenous and their estimated regression slopes will be biased.</li>
+<li>The omitted variable must be correlated with Y and at least one of the modeled Xp, to be a problem.</li>
+</ul>
+
+<p>
+Assume the following is the true regression model.
+\[Y=\beta_0+\beta_1X+\beta_2Z+\epsilon\]
+</p>
+
+<p>
+Now, suppose we omit Z from the model:
+\[Y=\beta_0+\beta_1X+\omega\]
+\[\omega = \epsilon + \beta_2Z\]
+</p>
+
+<p>
+Our new error, 𝜔, is a combination of the true error, 𝜀, and the omitted
+term, \(\beta_2Z\)
+</p>
+<ul class="org-ul">
+<li>Consequently, if X and Z are correlated, omitting Z induces a correlation between X and 𝜔 (i.e., endogeneity).</li>
+</ul>
+
+<p>
+Omitted variable bias can have severe consequences, but you can’t really test for it.
+</p>
+<ul class="org-ul">
+<li>The errors are correlated with the predictors, but our model is estimated under the assumption of exogeneity, so the residuals from our model will generally be uncorrelated with the predictors.</li>
+<li>We mostly have to pro-actively work to include all relevant variables in our model.</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-org572cf2d" class="outline-4">
+<h4 id="org572cf2d"><span class="section-number-4">7.1.4.</span> 4 The errors have constant, finit variance. heteroscedasticity</h4>
+<div class="outline-text-4" id="text-7-1-4">
+<ul class="org-ul">
+<li>\(Var(\epsilon_n)=\sigma^2<\infty\)</li>
+</ul>
+
+<p>
+see spherical
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="orgf350e0a"></a>Consequences of heteroscedasticity<br />
+<div class="outline-text-5" id="text-7-1-4-1">
+<p>
+Non-constant error variance will not bias the parameter estimates.
+</p>
+<ul class="org-ul">
+<li>The best fit line is still correct.</li>
+<li>Our measure of uncertainty around that best fit line is wrong.</li>
+</ul>
+<p>
+Heteroscedasticity will bias standard errors (usually downward).
+</p>
+<ul class="org-ul">
+<li>Test statistics will be too large.</li>
+<li>CIs will be too narrow.</li>
+<li>We will have inflated Type I error rates.</li>
+</ul>
+</div>
+</li>
+<li><a id="org4eb723a"></a>Treating heteroscedasticity<br />
+<div class="outline-text-5" id="text-7-1-4-2">
+<ol class="org-ol">
+<li>Transform your outcome using a concave function (e.g., ln(Y), √Y).
+<ul class="org-ul">
+<li>These transformations will shrink extreme values more than small/moderate ones.</li>
+<li>It’s usually a good idea to first shift the variable’s scale by setting the minimum value to 1.</li>
+</ul></li>
+<li>Refit the model using weighted least squares.
+<ul class="org-ul">
+<li>Create inverse weights using functions of the residual variances or quantities highly correlated therewith.</li>
+</ul></li>
+<li>Use a Heteroscedasticity Consistent (HC) estimate of the asymptotic covariance matrix.
+<ul class="org-ul">
+<li>Robust standard errors, Huber-White standard errors, Sandwich estimators</li>
+<li>HC estimators correct the standard errors for non-constant error variance.</li>
+</ul></li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-R">## The 'sandwich' package provides several HC estimators:
+library(sandwich)
+## the 'lmtest' package provides fancy testing tools for linear models:
+library(lmtest)
+## Use sandwich estimator to compute ACOV matrix:
+hcCov &lt;- vcovHC(out1)
+## Test coefficients with robust SEs:
+robTest &lt;- coeftest(out1, vcov = hcCov)
+## Test coefficients with default SEs:
+defTest &lt;- summary(out1)$coefficients
+</pre>
+</div>
+</div>
+</li>
+<li><a id="org4f0971e"></a>Testing<br />
+<div class="outline-text-5" id="text-7-1-4-3">
+<p>
+We can create a residual plot to test for this
+</p>
+
+<p>
+Non-constant error variance violates assumption4
+</p>
+
+
+<div id="org850623f" class="figure">
+<p><img src="Regression_Assumptions_and_Diagnostics/2023-12-11_17-54-50_screenshot.png" alt="2023-12-11_17-54-50_screenshot.png" />
+</p>
+</div>
+
+<p>
+Non-constant error variance
+</p>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-orge3d9fd9" class="outline-4">
+<h4 id="orge3d9fd9"><span class="section-number-4">7.1.5.</span> 5 The errors are uncorrelated</h4>
+<div class="outline-text-4" id="text-7-1-5">
+<p>
+\(\Cov(\epsilon_j,\epsilon_j)=0,\ i\ne j\)
+</p>
+
+<p>
+see spherical
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="org41a7703"></a>Correlated Errors<br />
+<div class="outline-text-5" id="text-7-1-5-1">
+<p>
+Errors can become correlated in two basic ways:
+</p>
+<ol class="org-ol">
+<li>Serial dependence
+<ul class="org-ul">
+<li>When modeling longitudinal data, the errors for a given observational unit</li>
+<li>We can detect temporal dependence by examining the autocorrelation of the residuals</li>
+</ul></li>
+<li>Clustering
+<ul class="org-ul">
+<li>Your data have some important, unmodeled, grouping structure
+<ul class="org-ul">
+<li>Children nested within classrooms</li>
+<li>Romantic couples</li>
+<li>Departments within a company</li>
+</ul></li>
+<li>We can detect problematic level of clustering with the intraclass correlation coefficient (icc)
+<ul class="org-ul">
+<li>We need to know the clustering variable to apply the icc</li>
+</ul></li>
+</ul></li>
+</ol>
+</div>
+</li>
+<li><a id="org108e125"></a>Treating Correlated Errors<br />
+<div class="outline-text-5" id="text-7-1-5-2">
+<p>
+Serially dependent errors in a longitudinal model usually indicate an inadequate model.
+</p>
+<ul class="org-ul">
+<li>Your model is ignoring some important aspect of the temporal variation that is being absorbed by the error terms.</li>
+<li>Hopefully, you can add the missing component to your model.</li>
+</ul>
+
+<p>
+Clustering can be viewed as theoretically meaningful or as a nuisance factor that needs to be controlled
+</p>
+
+<p>
+If the clustering is meaningfull, you should model the data using multilevel modelling
+</p>
+<ul class="org-ul">
+<li>Hierarchical linear regression</li>
+<li>Mixed models</li>
+<li>Random effects models</li>
+</ul>
+
+<p>
+If the clustering is an uninteresting nuisance, you can use specialized HC variance estimators that deal with clustering
+</p>
+<div class="org-src-container">
+<pre class="src src-R">## Read in some data:
+LeeBryk &lt;- readRDS(paste0(dataDir, "lee_bryk.rds"))
+## Estimate a linear regression model:
+fit &lt;- lm(math ~ ses + sector, data = LeeBryk)
+## Calculate the residual ICC:
+ICC::ICCbare(x = LeeBryk$schoolid, y = resid(fit))
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">0.07487712</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">## Robust tests:
+coeftest(fit, vcov = vcovCL(fit, ~ schoolid))
+
+#t test of coefficients:
+#Estimate Std. Error t value Pr(&gt;|t|)
+#(Intercept) 11.79965 0.20318 58.0746 &lt; 2.2e-16 ***
+#ses 2.94860 0.12794 23.0475 &lt; 2.2e-16 ***
+#sectorprivate 1.93495 0.31717 6.1006 1.111e-09 ***
+#---
+#Signif. codes:
+#0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-orge072d62" class="outline-4">
+<h4 id="orge072d62"><span class="section-number-4">7.1.6.</span> 6 The errors are normally distributed.</h4>
+<div class="outline-text-4" id="text-7-1-6">
+<p>
+\(e\sim N(0,\sigma^2)\)
+</p>
+
+<p>
+If errors are non-normal, small-sample inferences may be biased.
+</p>
+<ul class="org-ul">
+<li>The justification for some tests and procedures used in regression analysis may not hold</li>
+</ul>
+</div>
+<ol class="org-ol">
+<li><a id="orgdbf6f12"></a>Test with Q-Q Plot<br />
+<div class="outline-text-5" id="text-7-1-6-1">
+<div class="org-src-container">
+<pre class="src src-R">plot(out1, 2)
+</pre>
+</div>
+
+<p>
+One of the best ways to evaluate the normality of the error distribution with a Q-Q Plot.
+</p>
+<ul class="org-ul">
+<li>Plot the quantiles of the residual distribution against the theoretically ideal quantiles.</li>
+<li>We can actually use a Q-Q Plot to compare any two distributions.</li>
+</ul>
+
+
+<div id="orgec0cae9" class="figure">
+<p><img src="Regression_Assumptions_and_Diagnostics/2024-01-02_17-46-29_screenshot.png" alt="2024-01-02_17-46-29_screenshot.png" />
+</p>
+</div>
+</div>
+</li>
+<li><a id="orgf993ecf"></a>Consequences of Violating Normality<br />
+<div class="outline-text-5" id="text-7-1-6-2">
+<p>
+In small samples, with fixed predictors, normally distributed errors imply normal sampling distributions for the regression coefficients.
+</p>
+<ul class="org-ul">
+<li>In large samples, the central limit theorem implies normal sampling distributions for the coefficients, regardless of the error distribution.</li>
+</ul>
+
+<p>
+Prediction intervals require normally distributed errors.
+</p>
+<ul class="org-ul">
+<li>Confidence intervals for predictions share the same normality requirements as the coefficients’ sampling distributions.</li>
+</ul>
+
+<p>
+Parameter estimates will not be fully efficient.
+</p>
+<ul class="org-ul">
+<li>Standard errors will be larger than they would have been with normally distributed errors.</li>
+</ul>
+</div>
+</li>
+<li><a id="orgff800cb"></a>Treating Violations of Normality<br />
+<div class="outline-text-5" id="text-7-1-6-3">
+<p>
+We usually don&rsquo;t need to do anything about non-normal errors
+</p>
+<ul class="org-ul">
+<li>The central limit theorem will protect our inferences.</li>
+</ul>
+
+<p>
+We can use bootstrapping to get around the need for normality.
+</p>
+<ol class="org-ol">
+<li>Treat your sample as a synthetic population from which you draw many new samples (with replacement).</li>
+<li>Estimate your model in each new sample.</li>
+<li>The replicates of your estimated parameters generate an empirical sampling distribution that you can use for inference.</li>
+</ol>
+
+<p>
+Bootstrapping can be used for inference on pretty much any estimable
+parameter, but it won’t work with small samples.
+</p>
+<ul class="org-ul">
+<li>Need to assume that your sample is representative of the population</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-org03b4d47" class="outline-4">
+<h4 id="org03b4d47"><span class="section-number-4">7.1.7.</span> Spherical errors (4+5)</h4>
+<div class="outline-text-4" id="text-7-1-7">
+<p>
+The assumption of spherical erros combines assumptions 4 and 5
+\(Var(\epsilon)=\sigma^2I_N\)
+</p>
+
+<p>
+If the errors are not spherical, the standard errors will be biased.
+</p>
+<ul class="org-ul">
+<li>The estimated regression coefficients will be unbiased, though.</li>
+<li>But the statistics and stuf can be biased</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org0852136" class="outline-3">
+<h3 id="org0852136"><span class="section-number-3">7.2.</span> Regression Diagnostics</h3>
+<div class="outline-text-3" id="text-7-2">
+<p>
+After fitting the model we check the assumptions, most assumptions cant be checked before fitting.
+</p>
+
+<p>
+If some of the assumptions are violeted, the inferences we make using the model may be wrong
+</p>
+<ul class="org-ul">
+<li>We need to check the tenability of our assumptions before leaning too heavily on the model estimates</li>
+</ul>
+
+<p>
+These checks are called regression diagnostics
+</p>
+<ul class="org-ul">
+<li>Graphical visualizations</li>
+<li>Quantitative indices/measures</li>
+<li>Formal statistical</li>
+</ul>
+
+<p>
+Alot of test require their own assumptions which is bad.
+</p>
+</div>
+<div id="outline-container-org85a069f" class="outline-4">
+<h4 id="org85a069f"><span class="section-number-4">7.2.1.</span> Residual Plots</h4>
+<div class="outline-text-4" id="text-7-2-1">
+<p>
+One of the most useful diagnostic graphics is the plot of residuals vs. predicted values.
+<img src="Regression_Assumptions_and_Diagnostics/2023-12-11_17-51-01_screenshot.png" alt="2023-12-11_17-51-01_screenshot.png" />
+</p>
+
+<p>
+We can create this plot by plotting the fitted lm() object in R.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">out1 &lt;- lm(Price ~ Horsepower,
+    data = Cars93)
+plot(out1, 1)
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org71a895b" class="outline-3">
+<h3 id="org71a895b"><span class="section-number-3">7.3.</span> Influential Observations</h3>
+<div class="outline-text-3" id="text-7-3">
+<p>
+Influential observations contaminate analyses in two ways:
+</p>
+<ol class="org-ol">
+<li>Exert too much influence on the fitted regression model</li>
+<li>Invalidate estimates/inferences by violating assumptions</li>
+</ol>
+
+<p>
+There are two distinct types of influential observations:
+</p>
+<ol class="org-ol">
+<li>Outliers
+<ul class="org-ul">
+<li>Observations with extreme outcome values, relative to the other data.</li>
+<li>Observations with outcome values that fit the model very badly.</li>
+</ul></li>
+<li>High-leverage observations
+<ul class="org-ul">
+<li>Observation with extreme predictor values, relative to other data</li>
+</ul></li>
+</ol>
+</div>
+<div id="outline-container-org7d1fc57" class="outline-4">
+<h4 id="org7d1fc57"><span class="section-number-4">7.3.1.</span> Outliers</h4>
+<div class="outline-text-4" id="text-7-3-1">
+<p>
+Outliers can be identified by scrutinizing the residuals.
+</p>
+<ul class="org-ul">
+<li>Observations with residuals of large magnitude may be outliers.</li>
+<li>The difficulty arises in quantifying what constitutes a “large” residual.</li>
+</ul>
+
+<p>
+If the residuals do not have constant variance, then we cannot directly compare them.
+</p>
+<ul class="org-ul">
+<li>We need to standardize the residuals in some way</li>
+</ul>
+
+<p>
+We are specifically interested in externally studentized residuals.
+</p>
+
+<p>
+We can’t simply standardize the ordinary residuals.
+</p>
+<ul class="org-ul">
+<li>Internally studentized residuals</li>
+<li>Outliers can pull the regression line towards themselves.</li>
+<li>The internally studentized residuals for outliers will be too small.</li>
+</ul>
+
+<p>
+Begin by defining the concept of a deleted residual:
+\[ \hat \epsilon_{(n)}=Y_n-\hat Y_{(n)} \]
+</p>
+<ul class="org-ul">
+<li>\(\hat\epsilon_{(n)}\) quantifies the distance of \(Y_n\) from the regression line estimated after excluding the nth observation.</li>
+<li>\(\hat Y_{(n)}\) is the predicted value for the nth observatin from the regression line estimated after exluding the nth observation</li>
+</ul>
+</div>
+<ol class="org-ol">
+<li><a id="org7d7a889"></a>Studentized Residuals<br />
+<div class="outline-text-5" id="text-7-3-1-1">
+<p>
+If we standardize the deleted residual, \(\hat\epsilon_{(n)}\), we get the externally studentized residual:
+\[t_{(n)}=\frac{\hat\epsilon_{(n)}}{SE_{\hat\epsilon_{(n)}}}\]
+The externally studentized residuals have two very useful properties:
+</p>
+<ol class="org-ol">
+<li>Each t(n) is scaled equivalently.
+<ul class="org-ul">
+<li>We can directly compare different t(n) .</li>
+</ul></li>
+<li>The t(n) are Student’s t distributed.
+<ul class="org-ul">
+<li>We can quantify outliers in terms of quantiles of the t distribution.</li>
+<li>|t(n) | &gt; 3.0 is a common rule of thumb for flagging outliers.</li>
+</ul></li>
+</ol>
+
+<p>
+Index plots of the externally studentized residuals can help spotlight potential outliers.
+</p>
+<ul class="org-ul">
+<li>Look for observations that clearly &ldquo;stand out from the crowd&rdquo;</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-R">rstudent(out1) %&gt;% plot()
+</pre>
+</div>
+
+
+<div id="orge286a8b" class="figure">
+<p><img src="Regression_Assumptions_and_Diagnostics/2024-01-02_19-29-57_screenshot.png" alt="2024-01-02_19-29-57_screenshot.png" />
+</p>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-org4d4e093" class="outline-4">
+<h4 id="org4d4e093"><span class="section-number-4">7.3.2.</span> High-Leverage Points</h4>
+<div class="outline-text-4" id="text-7-3-2">
+<p>
+We identify high-leverage observations through their leverage values.
+</p>
+<ul class="org-ul">
+<li>An observation’s leverage, \(h_n\), quantifies the extent to which its predictors affect the fitted regression model.</li>
+<li>Observations with \(X\) values very far from the mean, \(\bar X\), affect the fitted model disproportionately.</li>
+</ul>
+
+<p>
+Index plots of the leverage values can help spotlight high-leverage points.
+</p>
+<ul class="org-ul">
+<li>Again, look for observations that clearly “stand out from the crowd.”</li>
+</ul>
+
+<p>
+In simple linear regression, the nth leverage is given by:
+\[h_n=\frac 1 N + \frac{(X_n-\bar X)^2}{\sum^N_{m=1}(X_m-\bar X)^2}\]
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">hatvalues(out1) %&gt;% plot()
+</pre>
+</div>
+
+
+<div id="org643ffee" class="figure">
+<p><img src="Regression_Assumptions_and_Diagnostics/2024-01-02_19-38-14_screenshot.png" alt="2024-01-02_19-38-14_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org747fee3" class="outline-4">
+<h4 id="org747fee3"><span class="section-number-4">7.3.3.</span> Influential Points</h4>
+<div class="outline-text-4" id="text-7-3-3">
+<p>
+Observations with high leverage or large (externally) studentized residuals are not necessarily influential.
+</p>
+<ul class="org-ul">
+<li>High-leverage observations tend to be more influential than outliers.</li>
+<li>The worst problems arise from observations that are both outliers and have high leverage.</li>
+</ul>
+
+<p>
+Measures of influence simultaneously consider extremity in both X and Y dimensions.
+</p>
+<ul class="org-ul">
+<li>Observations with high measures of influence are very likely to cause problems.</li>
+</ul>
+
+<p>
+All measures of influence use the same logic as the deleted residual.
+</p>
+<ul class="org-ul">
+<li>Compare models estimated from the whole sample to models estimated from samples excluding individual observations.</li>
+</ul>
+
+<p>
+One of the most common measures of influence is <b>Cook’s Distance</b>
+\[Cook's D_n=\frac{\sum^N_{n=1}(\hat Y_n-\hat Y_{(n)})^2}{(P+1)\hat \sigma^2}=(P+1)^{-1}t^2_n\frac{h_n}{1-h_n}\]
+</p>
+
+<p>
+Index plots of Cook’s distances can help spotlight the influential points.
+</p>
+<ul class="org-ul">
+<li>Look for observations that clearly “stand out from the crowd.”</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-R">cd &lt;- cooks.distance(out1)
+plot(cd)
+</pre>
+</div>
+
+
+<div id="org94572c6" class="figure">
+<p><img src="Regression_Assumptions_and_Diagnostics/2024-01-02_19-49-05_screenshot.png" alt="2024-01-02_19-49-05_screenshot.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org83918f8" class="outline-4">
+<h4 id="org83918f8"><span class="section-number-4">7.3.4.</span> Removing Influential Observations</h4>
+<div class="outline-text-4" id="text-7-3-4">
+<p>
+Observation number 28 was the most influential according to Cook&rsquo;s Distance
+</p>
+<div class="org-src-container">
+<pre class="src src-R">(maxD &lt;- which.max(cd))
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">28</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">## Exclude the influential case:
+Cars93.2 &lt;- Cars93[-maxD, ]
+## Fit model with reduced sample:
+out2 &lt;- lm(Price ~ Horsepower, data = Cars93.2)
+round(summary(out1)$coefficients, 6)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">Estimate</td>
+<td class="org-right">Std.</td>
+<td class="org-right">Error</td>
+<td class="org-right">t value</td>
+<td class="org-right">Pr(&gt;&vert;t&vert;)</td>
+</tr>
+
+<tr>
+<td class="org-left">(Intercept)</td>
+<td class="org-right">-1.398769</td>
+<td class="org-right">1.820016</td>
+<td class="org-right">-0.768548</td>
+<td class="org-right">0.444152</td>
+</tr>
+
+<tr>
+<td class="org-left">Horsepower</td>
+<td class="org-right">0.145371</td>
+<td class="org-right">0.011898</td>
+<td class="org-right">12.218325</td>
+<td class="org-right">0.000000</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-R">round(summary(out2)$coefficients, 6)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">Estimate</td>
+<td class="org-right">Std.</td>
+<td class="org-right">Error</td>
+<td class="org-right">t   value</td>
+<td class="org-right">Pr(&gt;&vert;t&vert;)</td>
+</tr>
+
+<tr>
+<td class="org-left">(Intercept)</td>
+<td class="org-right">-2.837646</td>
+<td class="org-right">1.806418</td>
+<td class="org-right">-1.570868</td>
+<td class="org-right">0.119722</td>
+</tr>
+
+<tr>
+<td class="org-left">Horsepower</td>
+<td class="org-right">0.156750</td>
+<td class="org-right">0.011996</td>
+<td class="org-right">13.066942</td>
+<td class="org-right">0.000000</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Removing the outlier did not have a massive effect on the slope but it did lower the t-values by quite a bit
+</p>
+
+
+<div id="org626705b" class="figure">
+<p><img src="Regression_Assumptions_and_Diagnostics/2024-01-02_20-02-02_screenshot.png" alt="2024-01-02_20-02-02_screenshot.png" />
+</p>
+</div>
+
+<p>
+You could also remove the 2 most influential observations
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">(maxDs &lt;- sort(cd) %&gt;% names() %&gt;% tail(2) %&gt;% as.numeric())
+
+## Exclude influential cases:
+Cars93.2 &lt;- Cars93[-maxDs, ]
+
+## Fit model with reduced sample:
+out2.2 &lt;- lm(Price ~ Horsepower, data = Cars93.2)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org32458cf" class="outline-4">
+<h4 id="org32458cf"><span class="section-number-4">7.3.5.</span> Treating Influential Points</h4>
+<div class="outline-text-4" id="text-7-3-5">
+<p>
+The most common way to address influential observations is simply to delete them and refit the model.
+</p>
+<ul class="org-ul">
+<li>This approach is often effective—and always simple—but it is not fool-proof.</li>
+<li>Although an observation is influential, we may not be able to justify excluding it from the analysis.</li>
+</ul>
+
+<p>
+Robust regression procedures can estimate the model directly in the presence of influential observations.
+</p>
+<ul class="org-ul">
+<li>Observations in the tails of the distribution are weighted less in the estimation process, so outliers and high-leverage points cannot exert substantial influence on the fit.</li>
+<li>We can do robust regression with the rlm() function from the MASS package.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org4656ade" class="outline-2">
+<h2 id="org4656ade"><span class="section-number-2">8.</span> Assumtions of Logistic Regression</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-org9da2511" class="outline-3">
+<h3 id="org9da2511"><span class="section-number-3">8.1.</span> 1 The model is linear in the parameters</h3>
+<div class="outline-text-3" id="text-8-1">
+<p>
+same as linear regression
+</p>
+</div>
+</div>
+<div id="outline-container-orgfd1245b" class="outline-3">
+<h3 id="orgfd1245b"><span class="section-number-3">8.2.</span> 2 The predictor matrix if full rank</h3>
+<div class="outline-text-3" id="text-8-2">
+<ul class="org-ul">
+<li>\(N>P\)</li>
+<li>No \(X_p\) can be a linear combination of other predictors</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org9668164" class="outline-3">
+<h3 id="org9668164"><span class="section-number-3">8.3.</span> 3 The outcome is independently and identically binomially distributed</h3>
+<div class="outline-text-3" id="text-8-3">
+<p>
+\[Y_n \sim^{iid} Bin(\hat\pi, 1)\]
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: martijnV</p>
+<p class="date">Created: 2024-01-08 Mon 17:39</p>
+</div>
+</body>
+</html>

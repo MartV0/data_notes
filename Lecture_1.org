@@ -1,0 +1,2246 @@
+#+title: Lecture 1
+#+STARTUP: latexpreview
+#+STARTUP: show2levels
+#+EXPORT_FILE_NAME: index.html
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-bigblow.setup
+
+#+ATTR_ORG: :width 400
+
+* R basics
+** Getting help
+You can get help for a function using
+#+BEGIN_SRC R :exports both value
+anova()
+?anova
+help(anova)
+#+END_SRC
+** CRAN and packages
+*CRAN* is a repo for R packages
+#+BEGIN_SRC R :exports both value
+install.packages("mice")
+# There are two ways to load a package into R:
+library(stats)
+require(stats)
+#+END_SRC
+
+** R Data formats and importing/writing data
+*** Native data formats
+#+BEGIN_SRC R :exports both value
+## Load the built-in 'bfi' data from the 'psychTools' package
+data(bfi, package = "psychTools")
+
+## Access the documentation for the 'bfi' data
+?psychTools::bfi
+
+## Define the directory holding our data
+dataDir <- "../../../data/"
+
+## Load the 'boys' data from the R workspace
+## '../../../data/boys.RData'
+load(paste0(dataDir, "boys.RData"))
+save(boys, file = paste0(dataDir, "tmp.RData"))
+
+## Load the 'titanic' data stored in R data set
+## '../../../data/titanic.rds'
+titanic <- readRDS(paste0(dataDir, "titanic.rds"))
+saveRDS(titanic, file="titanic2.rds")
+#+END_SRC
+
+*** Delimited Data types (csv etc.)
+#+BEGIN_SRC R :exports both value
+## Load the 'diabetes' data from the tab-delimited file
+## '../../../data/diabetes.txt'
+diabetes <- read.table(paste0(dataDir, "diabetes.txt"),
+    header = TRUE,
+    sep = "\t")
+
+write.table(boys,
+    paste0(dataDir, "boys.txt"),
+    row.names = FALSE,
+    sep = "\t",
+    na = "-999")
+
+## Load the 2017 UTMB data from the comma-separated file
+## '../../../data/utmb_2017.csv'
+utmb1 <- read.csv(paste0(dataDir, "utmb_2017.csv"))
+
+write.csv2(boys, paste0(dataDir, "boys.csv"), row.names = FALSE, na = "")
+#+END_SRC
+- The read.csv() function assumes the values are seperated by commas
+- For EU-formatted CSV files (semicolons instead of commas), we can use read.csv2()
+
+*** SPSS Data (SAV)
+Reading this format is tricky, if we want to read SAV files there are two popular options:
+- foreign::read.spss()
+- haven::read_spss()
+
+foreign doesn't have a read equivelant
+#+BEGIN_SRC R :exports both value
+## Load the foreign package:
+library(foreign)
+
+## Use foreign::read.spss() to read '../../../data/mtcars.sav' into a list
+mtcars1 <- read.spss(paste0(dataDir, "mtcars.sav"))
+
+## Read '../../../data/mtcars.sav' as a data frame
+mtcars2 <- read.spss(paste0(dataDir, "mtcars.sav"), to.data.frame = TRUE)
+
+## Read '../../../data/mtcars.sav' without value labels
+mtcars3 <- read.spss(paste0(dataDir, "mtcars.sav"),
+    to.data.frame = TRUE,
+    use.value.labels = FALSE)
+#+END_SRC
+
+#+BEGIN_SRC R :exports both value
+library(labelled)
+
+## Use haven::read_spss() to read '../../../data/mtcars.sav' into a tibble
+mtcars4 <- read_spss(paste0(dataDir, "mtcars.sav"))
+#+END_SRC
+
+haven::read_spss() converts any SPSS variables with labels into labelled vectors
+- We can use the labbeled::unlabeleld() function to remove the value labels
+- [V-Sha~ -> V-Shaped
+
+The best option we have for writing SPSS data is haven::write_sav()
+
+#+BEGIN_SRC R :exports both value
+write_sav(mtcars2, paste0(dataDir, "mctars2.sav"))
+#+END_SRC
+This will preserve label information provided by factor variables and the haven_labelled class
+*** Excel (xlsx)
+We have two good options for loading data from Excel spreadsheets:
+- readxl::read_excel()
+- openxlsx::read.xlsx()
+
+#+BEGIN_SRC R :exports both value
+## Load the packages:
+library(readxl)
+library(openxlsx)
+
+## Use the readxl::read_excel() function to read the data from the 'titanic'
+## sheet of the Excel workbook stored at '../../../data/example_data.xlsx'
+titanic2 <- read_excel(paste0(dataDir, "example_data.xlsx"),
+    sheet = "titanic")
+
+## Use the openxlsx::read.xlsx() function to read the data from the 'titanic'
+## sheet of the Excel workbook stored at '../../../data/example_data.xlsx'
+titanic3 <- read.xlsx(paste0(dataDir, "example_data.xlsx"),
+    sheet = "titanic")
+#+END_SRC
+
+The openxlsx package provides a powerful toolkit for programmatically building Excel workbooks in R and saving the results.
+#+BEGIN_SRC R :exports both value
+## Use the openxlsx::write.xlsx() function to write the 'diabetes' data to an
+## XLSX workbook
+write.xlsx(diabetes, paste0(dataDir, "diabetes.xlsx"), overwrite = TRUE)
+
+## Use the openxlsx::write.xlsx() function to write each data frame in a list
+
+## to a separate sheet of an XLSX workbook
+write.xlsx(list(titanic = titanic, diabetes = diabetes, mtcars = mtcars),
+    paste0(dataDir, "example_data.xlsx"),
+    overwrite = TRUE)
+#+END_SRC
+
+** R Functions
+Any R command written as a word followed by parentheses is a function
+- mean()
+- library()
+Infix operators are aliased functions
+- <-
+- + - *
+- > < ==
+*** User-Defined Functions
+We can define our own functions using the "function()" function
+#+BEGIN_SRC R :exports both value
+square <- function(x) {
+    out <- x^2
+    out
+}
+
+square(5)
+#+END_SRC
+
+#+RESULTS:
+: 25
+
+One-line functions don't need braces:
+#+BEGIN_SRC R :exports both value
+square <- function(x) x^2
+square(5)
+#+END_SRC
+
+#+RESULTS:
+: 25
+
+**** Not strictly typed
+Function arguments are not strictly typed
+#+BEGIN_SRC R :exports both value
+square <- function(x) x^2
+sqaure(TRUE) # 1
+square(1:5)
+#+END_SRC
+
+#+RESULTS:
+|  1 |
+|  4 |
+|  9 |
+| 16 |
+| 25 |
+
+But there are limits:
+#+BEGIN_SRC R :exports both value
+square("bob")
+#+END_SRC
+
+#+RESULTS:
+Error in x^2: non-numeric argument to binary operator
+
+**** Multiple/list arguments
+*Multiple arguments:*
+#+BEGIN_SRC R :exports both value
+mod <- function(x, y) x %% y
+mod(10, 3)
+#+END_SRC
+
+*Or you can use a list to get multiple arguments:*
+#+BEGIN_SRC R :exports both value
+getLsBeta <- function(datList) {
+    X <- datList$X
+    y <- datList$y
+    solve(crossprod(X)) %*% t(X) %*% y
+}
+
+X <- matrix(runif(500), ncol = 5)
+datList <- list(y = X %*% rep(0.5, 5), X = X)
+getLsBeta(datList = datList)
+#+END_SRC
+
+**** Type/class of functions
+Functions are first-class objects in R.
+- We can treat functions like any other R object.
+
+R views an unevaluated function as an object with type ”closure”.
+#+BEGIN_SRC R :exports both value
+class(getLsBeta)
+#+END_SRC
+[1] "function"
+
+#+BEGIN_SRC R :exports both value
+typeof(getLsBeta)
+#+END_SRC
+[1] "closure"
+
+An evaluated functions is equivalent to the objects it returns.
+#+BEGIN_SRC R :exports both value
+class(getLsBeta(datList))
+#+END_SRC
+[1] "matrix" "array"
+
+#+BEGIN_SRC R :exports both value
+typeof(getLsBeta(datList))
+#+END_SRC
+[1] "double"
+** Iteration
+*** Loops
+There are three types of loops in R: for, while and until.
+Deze course behandelt alleen for (lol)
+#+BEGIN_SRC R :exports both value
+for(INDEX in RANGE) { Stuff To Do with the Current INDEX Value }
+#+END_SRC
+
+/examples:/
+#+BEGIN_SRC R :exports both value
+val <- 0
+for(i in 1:100) {
+    val <- val + i
+}
+val
+#+END_SRC
+
+#+RESULTS:
+: 5050
+
+This loop will compute the mean of every column in the mtcars data
+#+BEGIN_SRC R :exports both value
+means <- rep(0, ncol(mtcars))
+for(j in 1:ncol(mtcars)) {
+    means[j] <- mean(mtcars[ , j])
+}
+means
+#+END_SRC
+
+#+BEGIN_SRC R :exports both value
+listThing <- list(6,9,4,2)
+sum <- 0
+for(i in listThing) {
+    sum <- i + sum
+}
+sum
+#+END_SRC
+
+#+RESULTS:
+: 21
+
+Usually there is a function to achieve what you are trying to do with the loop (sum() for example)
+*** Apply
+Usually one of two forms:
+
+#+BEGIN_SRC R :exports both value
+apply(DATA, MARGIN, FUNCTION, ...)
+apply(DATA, FUNCTION, ...) # not sure if this works??? but was in slides
+#+END_SRC
+
+**** Margin
+Margin is how the function should be applied:
+E.g., for a matrix 1 indicates rows, 2 indicates columns, c(1, 2) indicates rows and columns. Where X has named dimnames, it can be a character vector selecting dimension names.
+
+#+BEGIN_SRC R :exports both value
+data(bfi, package = "psychTools")
+dat1 <- bfi[1:5,1:3]
+# | 2 | 4 | 3 |
+# | 2 | 4 | 5 |
+# | 5 | 4 | 5 |
+# | 4 | 4 | 6 |
+# | 2 | 3 | 3 |
+# sum over rows with above table
+apply(dat1, 1, sum)
+#+END_SRC
+
+#+RESULTS:
+|  9 |
+| 11 |
+| 14 |
+| 14 |
+|  8 |
+
+
+#+BEGIN_SRC R :exports both value
+data(bfi, package = "psychTools")
+dat1 <- bfi[1:5,1:3]
+# subtract 1 from every cell
+apply(dat1, (1:2), function(x)x-1)
+#+END_SRC
+
+#+RESULTS:
+| 1 | 3 | 2 |
+| 1 | 3 | 4 |
+| 4 | 3 | 4 |
+| 3 | 3 | 5 |
+| 1 | 2 | 2 |
+
+**** lapply and sapply
+similar concept but works on lists
+
+#+BEGIN_SRC R :exports both value
+list1 <- list(1,3,4,2,4)
+lapply(list1, function(x) x+1)
+#+END_SRC
+
+#+RESULTS:
+| 2 | 4 | 5 | 3 | 5 |
+
+sapply is a user friendly wrapper for lapply which be default returns a vector or matrix
+** Some tips/ style guide
+- While using RStudie use TAB to quickly acces the documentation of the function arguments
+- Use the [[https://style.tidyverse.org/][tidyverse style guide]]
+  - Can be down automatically in Rstudio -> addins -> style selection
+* R Objects & Data Types
+** Vectors
+Vectors are the simplest kind of R object, there is no concept of a "scalar" in R
+*** Atomic modes
+Vectors come in one of six "atomic modes":
+- numeric/double
+- logical -> bool
+- character
+- integer
+- complex
+  - A complex value in R is defined via the pure imaginary value i.
+- raw
+  - Intended to hold raw bytes
+*** Generating vectors
+#+BEGIN_SRC R :exports both value
+c(1, 2, 3)
+#+END_SRC
+
+#+RESULTS:
+| 1 |
+| 2 |
+| 3 |
+
+#+BEGIN_SRC R :exports both value
+1:5
+#+END_SRC
+
+#+RESULTS:
+| 1 |
+| 2 |
+| 3 |
+| 4 |
+| 5 |
+
+#+BEGIN_SRC R :exports both value
+1.2:5.3
+#+END_SRC
+
+#+RESULTS:
+| 1.2 |
+| 2.2 |
+| 3.2 |
+| 4.2 |
+| 5.2 |
+
+#+BEGIN_SRC R :exports both value
+rep(33,4)
+#+END_SRC
+
+#+RESULTS:
+| 33 |
+| 33 |
+| 33 |
+| 33 |
+
+#+BEGIN_SRC R :exports both value
+rep(1:3,3)
+#+END_SRC
+
+#+RESULTS:
+| 1 |
+| 2 |
+| 3 |
+| 1 |
+| 2 |
+| 3 |
+| 1 |
+| 2 |
+| 3 |
+
+
+#+BEGIN_SRC R :exports both value
+rep(1:3,each=2)
+#+END_SRC
+
+#+RESULTS:
+| 1 |
+| 1 |
+| 2 |
+| 2 |
+| 3 |
+| 3 |
+
+#+BEGIN_SRC R :exports both value
+seq(0, 1, 0.25)
+#+END_SRC
+
+#+RESULTS:
+|    0 |
+| 0.25 |
+|  0.5 |
+| 0.75 |
+|    1 |
+*** Combining data types in vectors?
+Not possible, some data types will be converted
+#+BEGIN_SRC R :exports both value
+a <- c(1,2,3)
+b <- c("foo", "bar")
+c(a,b)
+#+END_SRC
+
+#+RESULTS:
+[1] "1" "2" "3" "4" "5" "foo" "bar"
+
+** Matrices
+Matrices generalize vectors by adding a dimension attribute.
+*** Generating Matrices
+#+BEGIN_SRC R :exports both value
+matrix(1:5, nrow = 5, ncol = 2)
+#+END_SRC
+
+#+RESULTS:
+| 1 | 1 |
+| 2 | 2 |
+| 3 | 3 |
+| 4 | 4 |
+| 5 | 5 |
+
+
+#+BEGIN_SRC R :exports both value
+cbind(c(1,2,3),c(4,5,6))
+#+END_SRC
+
+#+RESULTS:
+| 1 | 4 |
+| 2 | 5 |
+| 3 | 6 |
+
+#+BEGIN_SRC R :exports both value
+m1 <- matrix(1:5, nrow = 5, ncol = 2)
+attributes(m1)
+#+END_SRC
+
+#+RESULTS:
+| 5 |
+| 2 |
+
+Matrices are populated in column-major order, by default
+#+BEGIN_SRC R :exports both value
+matrix(1:9, 3, 3)
+#+END_SRC
+
+#+RESULTS:
+| 1 | 4 | 7 |
+| 2 | 5 | 8 |
+| 3 | 6 | 9 |
+
+The byrow = TRUE option allows us to fill by row-major order
+#+BEGIN_SRC R :exports both value
+matrix(1:9, 3, 3, byrow = TRUE)
+#+END_SRC
+
+#+RESULTS:
+| 1 | 2 | 3 |
+| 4 | 5 | 6 |
+| 7 | 8 | 9 |
+
+*** Mixing data types
+Like vectors, matrices can only hold one type of data
+
+** Lists
+Lists are the workhorse of R data objects
+- An R list can hold an arbitrary set of other R objects
+
+In lists data types CAN be mixed
+*** Creating a list
+#+BEGIN_SRC R :exports both value
+list(1,2, "HI mom", TRUE)
+#+END_SRC
+
+#+RESULTS:
+| 1 | 2 | HI mom | TRUE |
+
+*** Named list elements
+#+BEGIN_SRC R :exports both value
+l3 <- list(name = "bob",
+    alive = TRUE,
+    age = 33,
+    relationshipStatus = 42+3i)
+
+l3$name
+#+END_SRC
+
+#+RESULTS:
+: bob
+
+Can also be done post-hoc via the names()
+#+BEGIN_SRC R :exports both value
+l1 = list(3, "hi", TRUE)
+names(l1) <- c("name1", "second", "last")
+l1$second
+#+END_SRC
+
+#+RESULTS:
+: hi
+*** Append onto list
+#+BEGIN_SRC R :exports both value
+(l4 <- list())
+l4$people <- c("Bob", "Alice", "Suzy")
+l4$money <- 0
+l4$logical <- FALSE
+l4
+#+END_SRC
+
+#+RESULTS:
+$people
+[1] "Bob"   "Alice" "Suzy"
+$money
+[1] 0
+$logical
+[1] FALSE
+
+** Data Frames
+R's way of storing rectangular data sets
+- Each column of a data frame is a vector
+- Each of these vectors can have a different type:
+
+Data frames are actually lists of vectors (representing the columns)
+*** Creating a dataframe
+We can create one using data.frame()
+#+BEGIN_SRC R :exports both value
+data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+#+END_SRC
+
+#+RESULTS:
+| 1 | -1 | 0.1 |
+| 2 |  1 | 0.2 |
+| 3 | -1 | 0.3 |
+| 4 |  1 | 0.4 |
+| 5 | -1 | 0.5 |
+| 6 |  1 | 0.6 |
+
+Columns can also be given names:
+#+BEGIN_SRC R :exports both value
+data.frame(x = 1:6, y = c(-1, 1), z = seq(0.1, 0.6, 0.1))
+#+END_SRC
+
+#+RESULTS:
+  x  y   z
+1 1 -1 0.1
+2 2  1 0.2
+3 3 -1 0.3
+4 4  1 0.4
+5 5 -1 0.5
+6 6  1 0.6
+
+*Creating from matrix*
+#+BEGIN_SRC R :exports both value
+data.frame(matrix(5, 4, 3))
+#+END_SRC
+
+#+RESULTS:
+| 5 | 5 | 5 |
+| 5 | 5 | 5 |
+| 5 | 5 | 5 |
+| 5 | 5 | 5 |
+*** Filling using sample or runif
+Sample makes a vector of some length randomly sampled from a vector
+
+Runif generates a vector of random numbers
+#+BEGIN_SRC R :exports both value
+data.frame(a = sample(c(TRUE, FALSE), 5, replace = TRUE),
+    b = sample(c("foo", "bar"), 5, replace = TRUE),
+    c = runif(5)
+    )
+#+END_SRC
+
+#+RESULTS:
+| TRUE | foo |  0.640138026094064 |
+| TRUE | bar | 0.0884113181382418 |
+| TRUE | bar |  0.099734982708469 |
+| TRUE | bar |  0.862016763305292 |
+| TRUE | bar |  0.991723588900641 |
+
+** Factors
+Factors are R’s way of repesenting nominal (categorical) variables
+- We can create a factor using the factor() function
+
+*** Creating factors
+#+BEGIN_SRC R :exports both value
+factor(sample(1:3, 8, TRUE), labels = c("red", "yellow", "blue"))
+#+END_SRC
+
+#+RESULTS:
+| red    |
+| blue   |
+| red    |
+| blue   |
+| yellow |
+| blue   |
+| yellow |
+| yellow |
+
+*** Factor attributes
+#+BEGIN_SRC R :exports both value
+x <- factor(sample(1:3, 8, TRUE), labels = c("red", "yellow", "blue"))
+attributes(x)
+#+END_SRC
+
+#+RESULTS:
+$levels
+[1] "red"    "yellow" "blue"
+$class
+[1] "factor"
+
+*** Internal representation
+Even though a factor’s data are represented by an integer vector, R does not consider factors to be interger/numeric data.
+* Data Manipulation and pipes
+** Base R Subsetting
+In Base R, we typically use three operators to subset objects
+- []
+- [[]]
+- $
+
+Which we choose depends on:
+- What type of object are we trying to subset?
+- How much of the original typing do we want to keep in the subset?
+
+*** []
+#+BEGIN_SRC R :exports both value
+x <- 10:20
+x [2]
+x [1:3]
+x [c(2, 5, 7)] # 11, 14, 16
+x [c(TRUE, FALSE, TRUE, FALSE, FALSE)]
+#+END_SRC
+
+#+RESULTS:
+| 10 |
+| 12 |
+| 15 |
+| 17 |
+| 20 |
+
+*** [[]]
+Rarely used, does have some differences though, drops any names or dimnames attribute, and only allows selection of a single element
+#+BEGIN_SRC R :exports both value
+x <- 10:20
+x [[2]]
+#+END_SRC
+
+#+RESULTS:
+: 11
+The [] method returns objects of class list (or data.frame if foo was a data.frame) while the [[]] method returns objects whose class is determined by the type of their values.
+
+*** Matrices
+#+BEGIN_SRC R :exports both value
+y <- matrix(1:24, 6, 4)
+y[4:6,2:3] # 2
+#+END_SRC
+
+#+RESULTS:
+| 10 | 16 |
+| 11 | 17 |
+| 12 | 18 |
+
+We can mix different selecting styles
+#+BEGIN_SRC R :exports both value
+y <- matrix(1:24, 6, 4)
+y[c(2,4),c(FALSE, TRUE, TRUE)] # 2
+#+END_SRC
+
+#+RESULTS:
+|  8 | 14 |
+| 10 | 16 |
+
+*** $ and lists
+We can use all three operators to subset lists.
+#+BEGIN_SRC R :exports both value
+list1 <- list(2, "noo", TRUE)
+names(list1) <- c("first", "second", "last")
+
+list1$first
+
+list1[1]
+
+list1[["first"]]
+#+END_SRC
+
+#+RESULTS:
+: 2
+
+#+BEGIN_SRC R :exports both value
+l4 <- list(2, "noo", TRUE)
+names(l4) <- c("first", "second", "last")
+tmp1 <- l4[1]
+tmp1$people
+# [1] "Bob" "Alice" "Suzy"
+class(tmp1)
+# [1] "list"
+tmp2 <- l4[[1]]
+# [1] "Bob" "Alice" "Suzy"
+class(tmp2)
+# [1] "character"
+#+END_SRC
+
+#+RESULTS:
+: numeric
+*** Data Frames
+We can subset the columns of a data frame using list semantics
+#+BEGIN_SRC R :exports both value
+d3 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) <- c("a", "b", "c")
+d3$a
+#+END_SRC
+
+#+RESULTS:
+| 1 |
+| 2 |
+| 3 |
+| 4 |
+| 5 |
+| 6 |
+
+#+BEGIN_SRC R :exports both value
+d3 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) <- c("a", "b", "c")
+d3[1]
+#+END_SRC
+
+#+RESULTS:
+| 1 |
+| 2 |
+| 3 |
+| 4 |
+| 5 |
+| 6 |
+
+#+ATTR_ORG: :width 400
+[[file:Data_Manipulation_and_pipes/2023-11-23_16-18-08_screenshot.png]]
+
+*** Logical indexing
+Filter by rows
+#+BEGIN_SRC R :exports both value
+d3 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) <- c("a", "b", "c")
+d3[(d3$a)%%2==0 & d3$c>0,]
+#+END_SRC
+Notic the comma at the end!
+
+This comma is needed because R uses the following notation for subsetting data frames.
+
+data(rows you want, columns you want)
+#+RESULTS:
+| 2 | 1 | 0.2 |
+| 4 | 1 | 0.4 |
+| 6 | 1 | 0.6 |
+** Tidyverse subsetting
+The dplyr package provides ways to subset data, two are most frequently used:
+**** select
+#+BEGIN_SRC R :exports both value
+library(dplyr)
+d3 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) <- c("a", "b", "c")
+select(d3, a, b)
+#+END_SRC
+
+#+RESULTS:
+| 1 | -1 |
+| 2 |  1 |
+| 3 | -1 |
+| 4 |  1 |
+| 5 | -1 |
+| 6 |  1 |
+
+#+BEGIN_SRC R :exports both value
+library(dplyr)
+d3 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) <- c("a", "b", "c")
+select(d3, -a)
+#+END_SRC
+
+#+RESULTS:
+| -1 | 0.1 |
+|  1 | 0.2 |
+| -1 | 0.3 |
+|  1 | 0.4 |
+| -1 | 0.5 |
+|  1 | 0.6 |
+
+**** filter and logical indexing
+#+BEGIN_SRC R :exports both value
+library(dplyr)
+d3 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) <- c("a", "b", "c")
+filter(d3, a%%2==0, c>0)
+#+END_SRC
+
+#+RESULTS:
+| 2 | 1 | 0.2 |
+| 4 | 1 | 0.4 |
+| 6 | 1 | 0.6 |
+
+We can achieve the same using logical indexing in Base R
+#+BEGIN_SRC R :exports both value
+d3 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) <- c("a", "b", "c")
+d3[(d3$a)%%2==0 & d3$c>0,]
+#+END_SRC
+Notic the comma at the end!
+
+#+RESULTS:
+| 2 | 1 | 0.2 |
+| 4 | 1 | 0.4 |
+| 6 | 1 | 0.6 |
+
+** Base R Variable Transformation
+#+BEGIN_SRC R :exports both value
+d3 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) <- c("a", "b", "c")
+d4 <- d3
+d4$a <- scale(d4$a)
+d4$a <- as.numeric(d4$a)
+d4
+#+END_SRC
+
+#+RESULTS:
+|  -1.33630620956212 | -1 | 0.1 |
+| -0.801783725737273 |  1 | 0.2 |
+| -0.267261241912424 | -1 | 0.3 |
+|  0.267261241912424 |  1 | 0.4 |
+|  0.801783725737273 | -1 | 0.5 |
+|   1.33630620956212 |  1 | 0.6 |
+
+** Tidyverse Variable Transformations
+#+BEGIN_SRC R :exports both value
+library(dplyr)
+d3 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) <- c("a", "b", "c")
+
+mutate(d3,
+    d = rbinom(nrow(d3), 1, c),
+    e = d * c,
+    a = scale(a)
+)
+#+END_SRC
+
+#+RESULTS:
+|  -1.33630620956212 | -1 | 0.1 | 0 |   0 |
+| -0.801783725737273 |  1 | 0.2 | 0 |   0 |
+| -0.267261241912424 | -1 | 0.3 | 1 | 0.3 |
+|  0.267261241912424 |  1 | 0.4 | 1 | 0.4 |
+|  0.801783725737273 | -1 | 0.5 | 0 |   0 |
+|   1.33630620956212 |  1 | 0.6 | 1 | 0.6 |
+
+** Sorting & Ordering
+*** Base R sort
+#+BEGIN_SRC R :exports both value
+l3 <- runif(n=8, min=1, max=20)
+sort(l3)
+#+END_SRC
+
+#+RESULTS:
+| 1.14997771941125 |
+| 6.18364422139712 |
+| 7.40294478787109 |
+| 8.80276804696769 |
+| 10.6937525619287 |
+| 14.7475167061202 |
+| 16.3595214642119 |
+| 16.9985088445246 |
+
+#+BEGIN_SRC R :exports both value
+l3 <- runif(n=8, min=1, max=20)
+sort(l3, decreasing = TRUE)
+#+END_SRC
+
+#+RESULTS:
+| 15.9437932423316 |
+| 15.0901547158137 |
+|   9.608802491799 |
+| 4.20592033001594 |
+| 4.16299939691089 |
+| 2.97972352942452 |
+| 2.14775081258267 |
+| 1.15068965195678 |
+
+*** Tidyverse Ordering
+#+BEGIN_SRC R :exports both value
+library(dplyr)
+d3 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) <- c("a", "b", "c")
+
+d3$d <- runif(n=6, min=1, max=20)
+arrange(d3, d)
+#+END_SRC
+
+#+RESULTS:
+| 4 |  1 | 0.4 | 1.03251850209199 |
+| 5 | -1 | 0.5 | 2.67228518775664 |
+| 3 | -1 | 0.3 | 6.22691969852895 |
+| 1 | -1 | 0.1 | 8.31828686594963 |
+| 6 |  1 | 0.6 | 12.4162582552526 |
+| 2 |  1 | 0.2 | 15.5486617612187 |
+
+
+#+BEGIN_SRC R :exports both value
+library(dplyr)
+d3 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1))
+names(d3) <- c("a", "b", "c")
+
+d3$d <- runif(n=6, min=1, max=20)
+arrange(d3, a*d, c)
+#+END_SRC
+
+#+RESULTS:
+| 2 |  1 | 0.2 |   1.041215069592 |
+| 1 | -1 | 0.1 | 19.1222469233908 |
+| 6 |  1 | 0.6 | 8.04311123443767 |
+| 3 | -1 | 0.3 | 18.1283924696036 |
+| 4 |  1 | 0.4 | 15.9365976287518 |
+| 5 | -1 | 0.5 | 15.7623822011519 |
+
+** Pipes
+The %>% symbol represents the pipe operator, used to compose functions
+- f(x) becomes x %>% f()
+- f(x, y) becomes x %>% f(y)
+- h(g(f(x))) becomes x %>% f %>% g %>% h
+
+Big brain lecturer forgot to mention this operator is not in the standard library, is in dplyr, magrittr and tidyverse among others
+
+*** Example use
+/Example use:/
+#+BEGIN_SRC R :exports both value
+library(dplyr)
+
+sqr <- function (x)
+{
+    x**2
+}
+
+plus1 <- function (x)
+{
+    x + 1
+}
+
+test <-
+    (1:10) %>%
+    sqr() %>%
+    plus1()
+
+test
+#+END_SRC
+
+#+RESULTS:
+|   2 |
+|   5 |
+|  10 |
+|  17 |
+|  26 |
+|  37 |
+|  50 |
+|  65 |
+|  82 |
+| 101 |
+
+/This is equivalent to:/
+#+BEGIN_SRC R :exports both value
+test <-
+    sqr(
+        plus1(
+            (1:10)))
+
+test
+#+END_SRC
+
+*** dot . in a pipeline, target specific argument
+Specify where you want the piped value to go
+#+BEGIN_SRC R :exports both value
+library(dplyr)
+
+power <- function (x, y)
+{
+    x**y
+}
+
+test <-
+    (1:10) %>%
+    power(3, y=.)
+
+test
+#+END_SRC
+
+#+RESULTS:
+|     3 |
+|     9 |
+|    27 |
+|    81 |
+|   243 |
+|   729 |
+|  2187 |
+|  6561 |
+| 19683 |
+| 59049 |
+*** Exposition Pipe: %$%
+[%$%] expose the names in lhs to the rhs expression. This is useful when functions do not have a built-in data argument.
+or
+The exposition pipe exposes the contents of an object to the next function in the pipeline.
+#+BEGIN_SRC R :exports both value
+library(dplyr)
+
+# all equivelant:
+
+cats %$% t.test(Hwt ~ Sex)
+cats %>% t.test(Hwt ~ Sex, data = .)
+t.test(Hwt ~ Sex, data = cats)
+#+END_SRC
+
+* Data Visualization
+** Baser R Graphics
+*** Scatterplots
+We can create a basic scatterplot using the plot() function
+#+BEGIN_SRC R :exports both value
+plot(runif(20, 0, 100), runif(20, 0, 10))
+#+END_SRC
+
+#+ATTR_ORG: :width 400
+[[file:Data_Visualization/2023-11-27_17-17-25_screenshot.png]]
+
+
+#+BEGIN_SRC R :exports both value
+diabetes %$% plot(
+    y = tc,
+    x = bmi,
+    ylab = "Total Cholesterol",
+    xlab = "Body Mass Index",
+    main = "Relation between BMI and Cholesterol",
+    ylim = c(0, 350),
+    xlim = c(0, 50)
+    )
+#+END_SRC
+
+#+ATTR_ORG: :width 400
+[[file:Data_Visualization/2023-11-27_17-19-43_screenshot.png]]
+
+*** Histogram
+We can create a simple histogram with the hist() function
+
+#+BEGIN_SRC R :exports both value
+hist(runif(30,0,10))
+#+END_SRC
+
+#+ATTR_ORG: :width 250
+[[file:Data_Visualization/2023-11-27_17-21-52_screenshot.png]]
+*** Boxplots
+We can create simple boxplots via the boxplot function
+#+BEGIN_SRC R :exports both value
+boxplot(runif(30,40,60),runif(60,10,50))
+#+END_SRC
+
+#+ATTR_ORG: :width 250
+[[file:Data_Visualization/2023-11-27_17-24-41_screenshot.png]]
+
+*** Kernel Density Plots
+#+BEGIN_SRC R :exports both value
+density(runif(5,0,100)) %>% plot()
+#+END_SRC
+
+#+ATTR_ORG: :width 250
+[[file:Data_Visualization/2023-11-27_17-27-25_screenshot.png]]
+
+** GGPlot graphics
+Base R graphics are fine for quick and dirty visualizations but for publication quality graphics, you should probably use GGPlot
+- GGPlot uses the ”grammar of graphics” and ”tidy data” to build up a figure from modular components.
+*** Grammar of graphics
+[[file:Data_Visualization/2023-11-27_17-29-27_screenshot.png]]
+*** Basic Setup (Data and aesthetic)
+We start by initializing the object that will define our plot
+- This is regardless of what we want to plot
+- We must specify a data source and a aesthetic via the aes() function
+
+#+BEGIN_SRC R :exports both value
+library(ggplot2)
+p1 <- ggplot(data = diabetes, mapping = aes(x = bmi, y = glu))
+p1
+#+END_SRC
+
+This doesn't make any plot yet
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-11-27_17-34-05_screenshot.png]]
+
+*** Geometries (line, dots etc)
+**** Line and dots
+#+BEGIN_SRC R :exports both value
+p1 + geom_point() + geom_line()
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-11-27_17-36-34_screenshot.png]]
+
+**** Histogram
+#+BEGIN_SRC R :exports both value
+p2 <- ggplot(diabetes, aes(tc))
+p2 + geom_histogram()
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-11-27_17-47-28_screenshot.png]]
+
+**** Density
+#+BEGIN_SRC R :exports both value
+p2 + geom_density()
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-11-27_17-49-57_screenshot.png]]
+
+**** Boxplot
+#+BEGIN_SRC R :exports both value
+p2 + geom_histogram()
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-11-27_17-52-44_screenshot.png]]
+
+#+BEGIN_SRC R :exports both value
+p3 <- ggplot(diabetes, aes(sex, bmi))
+p3 + geom_boxplot()
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-11-27_17-53-59_screenshot.png]]
+
+*** Statistics
+We can also add statistical summaries of the data.
+#+BEGIN_SRC R :exports both value
+p1 + geom_point() + geom_smooth()
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-11-27_17-56-05_screenshot.png]]
+
+#+BEGIN_SRC R :exports both value
+p1 + geom_point() + geom_smooth(method = "lm")
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-11-27_17-58-08_screenshot.png]]
+
+*** Styling
+Changing the style outside of aes() applies the styling to the entire plot
+**** Jitter
+#+BEGIN_SRC R :exports both value
+p5 <- ggplot(titanic, aes(age, survived))
+p5 + geom_jitter(color = "blue", size = 2, height = 0.1)
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-11-27_18-02-02_screenshot.png]]
+*** Themes
+We can apply canned themes to adjust a plot overall appearance\
+Default theme:
+#+BEGIN_SRC R :exports both value
+p1.1 <- p1 + geom_point()
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-12-29_12-20-35_screenshot.png]]
+
+#+BEGIN_SRC R :exports both value
+p1.1 + theme_classic()
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-12-29_12-22-38_screenshot.png]]
+
+You can also modify individual themes
+#+BEGIN_SRC R :exports both value
+p1.1 + theme_classic() +
+    theme(axis.title = element_text(size = 16,
+                                    family = "serif",
+                                    face = "bold",
+                                    color = "blue"),
+        aspect.ratio = 1)
+#+END_SRC
+*** Facets
+Faceting allow us to make arrays of conditional plots.
+
+#+BEGIN_SRC R :exports both value
+p7 <- ggplot(titanic, aes(age, survived, color = class)) +
+    geom_jitter(height = 0.05) +
+    geom_smooth(method = "glm",
+                method.args = list(family = "binomial"),
+                se = FALSE)
+p7 + facet_wrap(vars(sex))
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-12-29_12-34-35_screenshot.png]]
+
+#+BEGIN_SRC R :exports both value
+p8 <- ggplot(titanic, aes(age, survived)) +
+    geom_jitter(height = 0.05) +
+    geom_smooth(method = "glm",
+                method.args = list(family = "binomial"),
+                se = FALSE)
+p8 + facet_grid(vars(sex), vars(class))
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-12-29_12-38-20_screenshot.png]]
+*** Joining multiple Figures
+If we want to paste several different plots into a single figure (without faceting), we can use the utilities in the gridExtra package.
+
+#+BEGIN_SRC R :exports both value
+library(gridExtra)
+
+grid.arrange(p1 + geom_point(),
+             p3 + geom_boxplot(),
+             p1 + geom_line(),
+             p8 + facet_grid(vars(sex), vars(class)),
+             ncol = 2)
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Visualization/2023-12-29_12-43-52_screenshot.png]]
+
+* Data Cleaning
+When we receive new data, they are generally messy and contaminated by various anomalies and errors
+
+One of the first steps in processing a new set of data is cleaning
+
+By cleaning the data, we ensure a few properties:
+- The data are in an analyzable format.
+- All data take legal values.
+- Any outliers are located and treated.
+- Any missing data are located and treated.
+
+** Missing data
+Empty cells in a dataset where there should be observerd values
+- The missing cells correspond to true population values, but we haven't observed those values
+
+Not every empty cell is a missing datum
+- Quality-of-life ratings for dead patients in a mortality study
+- Firm profitability after the company goes out of business
+- Self-reported severity of menstrual cramping for men
+- Empty blocks of data following “gateway” items
+
+*** Missing Data Pattern
+Missing data patterns represent unique combinations of observerd and missing items
+- $P$ items -> $2^P$ possible patterns
+
+[[file:Data_Cleaning/2023-12-29_14-07-36_screenshot.png]]
+**** example/ in r
+#+BEGIN_SRC R :exports both value
+## Load the mice library:
+library(mice)
+
+## Compute missing data patterns:
+pats <- md.pattern(boys)
+
+pats
+plot_pattern(boys, rotate = TRUE)
+#+END_SRC
+
+#+RESULTS:
+|     | age | reg | wgt | hgt | bmi | hc | gen | phb |  tv |      |
+|-----+-----+-----+-----+-----+-----+----+-----+-----+-----+------|
+| 223 |   1 |   1 |   1 |   1 |   1 |  1 |   1 |   1 |   1 |    0 |
+|  19 |   1 |   1 |   1 |   1 |   1 |  1 |   1 |   1 |   0 |    1 |
+|   1 |   1 |   1 |   1 |   1 |   1 |  1 |   1 |   0 |   1 |    1 |
+|   1 |   1 |   1 |   1 |   1 |   1 |  1 |   0 |   1 |   0 |    2 |
+| 437 |   1 |   1 |   1 |   1 |   1 |  1 |   0 |   0 |   0 |    3 |
+|  43 |   1 |   1 |   1 |   1 |   1 |  0 |   0 |   0 |   0 |    4 |
+|  16 |   1 |   1 |   1 |   0 |   0 |  1 |   0 |   0 |   0 |    5 |
+|   1 |   1 |   1 |   1 |   0 |   0 |  0 |   0 |   0 |   0 |    6 |
+|   1 |   1 |   1 |   0 |   1 |   0 |  1 |   0 |   0 |   0 |    5 |
+|   1 |   1 |   1 |   0 |   0 |   0 |  1 |   1 |   1 |   1 |    3 |
+|   1 |   1 |   1 |   0 |   0 |   0 |  0 |   1 |   1 |   1 |    4 |
+|   1 |   1 |   1 |   0 |   0 |   0 |  0 |   0 |   0 |   0 |    7 |
+|   3 |   1 |   0 |   1 |   1 |   1 |  1 |   0 |   0 |   0 |    4 |
+|     |   0 |   3 |   4 |  20 |  21 | 46 | 503 | 503 | 522 | 1622 |
+
+[[file:Data_Cleaning/2023-12-29_14-09-04_screenshot.png]]
+
+*** Nonresponse Rates
+**** Proportion missing
+- The proportion of cells containing missing data
+- Should be computed for each variable, not for the entire dataset
+
+#+BEGIN_SRC R :exports both value
+## Load the mice library:
+library(mice)
+
+## Load some example data:
+data(boys, package = "mice")
+## Compute variable-wise proportions missing:
+mMat <- is.na(boys)
+mMat %>% colMeans() %>% round(3)
+#+END_SRC
+
+#+RESULTS:
+|   age |   hgt |   wgt |   bmi |    hc |   gen |   phb |    tv |   reg |
+|-------+-------+-------+-------+-------+-------+-------+-------+-------|
+| 0.000 | 0.027 | 0.005 | 0.028 | 0.061 | 0.672 | 0.672 | 0.698 | 0.004 |
+
+#+BEGIN_SRC R :exports both value
+## Compute observation-wise proportions missing:
+pmRow <- rowMeans(mMat)
+## Summarize the above:
+range(pmRow)
+# [1] 0.0000000 0.7777778
+
+pmRow[pmRow > 0] %>% range()
+# [1] 0.1111111 0.7777778
+
+median(pmRow)
+# [1] 0.3333333
+
+## Compute the proportion of complete cases:
+mean(pmRow == 0)
+# [1] 0.2981283
+#+END_SRC
+**** Attrition Rate
+- The proportion of participants that drop-out of a study at each measurement occasion
+**** Covariance Coverage
+- The proportion of cases available to estimate a given pairwise relationship
+  - e.g. a convariance between two variables
+- Very important to have adequate coverage for the parameters you want to estimate
+
+We can use routines from the mice package to calculate covariance coverage and response patterns.
+
+#+BEGIN_SRC R :exports both value
+## Compute the covariance coverage:
+cc <- md.pairs(boys)$rr / nrow(boys)
+## Check the result:
+round(cc, 2)
+#+END_SRC
+
+#+RESULTS:
+|     |  age |  hgt |  wgt |  bmi |   hc |  gen |  phb |  tv |  reg |
+|-----+------+------+------+------+------+------+------+-----+------|
+| age | 1.00 | 0.97 | 0.99 | 0.97 | 0.94 | 0.33 | 0.33 | 0.3 | 1.00 |
+| hgt | 0.97 | 0.97 | 0.97 | 0.97 | 0.92 | 0.32 | 0.32 | 0.3 | 0.97 |
+| wgt | 0.99 | 0.97 | 0.99 | 0.97 | 0.94 | 0.32 | 0.32 | 0.3 | 0.99 |
+| bmi | 0.97 | 0.97 | 0.97 | 0.97 | 0.91 | 0.32 | 0.32 | 0.3 | 0.97 |
+| hc  | 0.94 | 0.92 | 0.94 | 0.91 | 0.94 | 0.33 | 0.33 | 0.3 | 0.93 |
+| gen | 0.33 | 0.32 | 0.32 | 0.32 | 0.33 | 0.33 | 0.33 | 0.3 | 0.33 |
+| phb | 0.33 | 0.32 | 0.32 | 0.32 | 0.33 | 0.33 | 0.33 | 0.3 | 0.33 |
+| tv  | 0.30 | 0.30 | 0.30 | 0.30 | 0.30 | 0.30 | 0.30 | 0.3 | 0.30 |
+| reg | 1.00 | 0.97 | 0.99 | 0.97 | 0.93 | 0.33 | 0.33 | 0.3 | 1.00 |
+*** Visualizing Incomplete Data
+The ggmice package provides some nice ways to visualize incomplete data and objects created during missing data treatment.
+
+#+BEGIN_SRC R :exports both value
+library(ggmice); library(ggplot2)
+ggmice(boys, aes(wgt, hgt)) + geom_point()
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Cleaning/2023-12-29_15-44-49_screenshot.png]]
+
+We can also create a nicer version of the response pattern plot.
+
+#+BEGIN_SRC R :exports both value
+plot_pattern(boys, rotate = TRUE)
+#+END_SRC
+
+[[file:Data_Cleaning/2023-12-29_14-09-04_screenshot.png]]
+
+The naniar package also provides some nice visualization and numerical summary routines for incomplete data.
+
+#+BEGIN_SRC R :exports both value
+naniar::gg_miss_upset(boys)
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Data_Cleaning/2023-12-29_16-04-49_screenshot.png]]
+
+** Outliers
+We only consider univariate (/:only involving one variable/) outliers
+- Extreme values with respect to the distribution of a variable's other observations
+  - A human height measurement of 3 meters
+  - Student with a income of $250,000
+- Not accounting for any particular model
+
+A univariate outlier may, or may not be an illegal value
+- Data entry errors are probably the most common cause
+- Outliers can also be legal, but extreme, values
+
+Key Point: We choose to view an outlier as arising from a different population than the one to which we want to generalize our findings to
+*** Finding outliers: Boxplot Method
+Tukey (1977) described a procedure for flagging potential outliers based on a box-and-whiskers plot.
+- Does not require normally distributed X
+- Not sensitive to outliers
+
+A *fence* is an interval defined as the following function of the *first quartile*, the *third quartile*, and the *inner quartile* range $(IQR=Q_3-Q_1)$:
+$$F=\{Q_1-C\times IQR,\ Q_3+C\times IQR\}$$
+- Taking C = 1.5 produces the inner fence
+- Taking C = 3.0 produces the outer fence
+
+We can use these fences to indentify potential outliers:
+- Any value that falls outside of the inner fence is a possible outlier
+- Any value that falls outside of the inner fence is a probable outlier
+*** Boxplot in R
+#+BEGIN_SRC R :exports both value
+## Find potentially outlying cases:
+(out <- boys %$% boxplot.stats(bmi, coef = 3)$out)
+#+END_SRC
+
+#+RESULTS:
+| 30.62 31.34 31.74 |
+
+#+BEGIN_SRC R :exports both value
+## Which observations are potential outliers?
+boys %$% which(bmi %in% out)
+#+END_SRC
+
+#+RESULTS:
+| 574 668 733 |
+
+#+BEGIN_SRC R :exports both value
+## View the potentially outlying cases:
+boys %>% filter(bmi %in% out)
+#+END_SRC
+
+#+RESULTS:
+|   |    age |   hgt |   wgt |   bmi |   hc | gen  | phb  | tv | reg   |
+|---+--------+-------+-------+-------+------+------+------+----+-------|
+| 1 | 15.493 | 182.5 | 102.0 | 30.62 | 57.7 | <NA> | <NA> | NA | west  |
+| 2 | 17.749 | 174.0 |  94.9 | 31.34 | 56.3 | G5   | P5   | 25 | west  |
+| 3 | 19.926 | 192.3 | 117.4 | 31.74 | 57.6 | G5   | P6   | 18 | north |
+*** Breakdown Point
+To compare statistics, we consider their breakdown points.
+- The breakdown point is the minimum proportion of cases that must be replaced by ∞ to cause the value of the statistic to go to ∞.
+
+The mean has a breakdown point of 1/N.
+- Replacing a single value with ∞ will produce an infinite mean.
+- This is why we shouldn’t use basic z-scores to find outliers.
+
+The median has breakdown point of 50%.
+- We can replace n < N/2 of the observations with ∞ without producing an infinite median.
+*** Outliers for Categorical Data
+Nominal, ordinal, and binary items can have outliers
+- Outliers on categorical variables are often more indicative of bad variables than outlying cases.
+
+Ordinal
+- Most participant endorse one of the lowest categories on an ordinal item, but a few participants endorse the highest category.
+- The participants who endorse the highest category may be outliers.
+
+Nominal
+- Groups with very low membership may be outliers on nominal grouping variables.
+
+Binary
+- If most endorse the item, the few who do not may be outliers.
+*** Treating outliers
+If we locate any outliers, they must be treated.
+- Outliers cause by errors, mistakes, or malfunctions (i.e., error outliers) should be directly corrected.
+- Labeling non-error outliers is a subjective task.
+  - A (non-error) outlier must originate from a population separate from the one we care about.
+  - Don’t blindly automate the decision process.
+
+The most direct solution is to delete any outlying observation.
+- If you delete non-error outliers, the analysis should be reported twice: with outliers and without.
+For univariate outliers, we can use less extreme types of deletion.
+- Delete outlying values (but not the entire observation).
+- These empty cells then become missing data.
+- Treat the missing values along with any naturally-occurring nonresponse.
+
+*Winsorization:*
+- Replace the outliers with the nearest non-outlying value
+
+We can also use robust regression procedures to estimate the model directly in the presence of outliers.
+
+Weight the objective function to reduce the impact of outliers
+- M-estimation
+
+Trim outlying observations during estimation
+- Least trimmed squares, MCD, MVE
+
+Take the median, instead of the mean, of the squared residuals
+- Least median of squares
+
+Model some quantile of the DV’s distribution instead of the mean
+- Quantile regression
+
+Model the outcome with a heavy-tailed distribution
+- Laplacian, Student’s T
+* Introduction to Linear Modeling
+** Simple Linear Regression
+Best fit line is defined by a simple equation:
+\begin{equation}
+\hat Y = \hat \beta_o+\hat\beta_1X
+\end{equation}
+*** Thinking about error
+The above equation only describes the best fit line.
+We need to account for the estimation error
+    \begin{equation}
+Y = \hat \beta_o+\hat\beta_1X +\hat\epsilon
+\end{equation}
+*** Estimating the Regression Coefficients
+Minimize the sum of squared residuals
+\begin{equation}
+RSS =\sum^N_{n=1} \hat \epsilon^2_n
+\end{equation}
+
+$\hat \epsilon_n=Y_n-\hat Y_n$
+
+*** Model Fit, measures, r-squared
+We may also want to know how well our model explains the outcome.
+- Our model explains some proportion of the outcome’s variability.
+- The residual variance ˆ𝜎2 = Var(ˆ𝜀) will be less than Var(Y)
+
+We quantify the proportion of the outcome’s variance that is explained by our model using the R2 statistic
+
+\begin{equation}
+R^2=\frac{TSS-RSS}{TSS}=1-\frac{RSS}{TSS}
+\end{equation}
+
+\begin{equation}
+TSS=\sum^N_{n=1}(Y_n-\bar Y)^2=Var(Y)\times(N-1)
+\end{equation}
+$\bar y$ is average of y
+
+
+When assessing predictive performance, we will most often use the mean squared error as our criterion.
+
+\begin{equation}
+MSE=\frac 1 N \sum^N_{n=1}(Y_n-\hat Y_n)^2=\frac {RSS} N
+\end{equation}
+MSE is better to use when we want to predict, so we dont care about explenation.
+
+$$RMSE = \sqrt{MSE}$$
+
+*** Information Criteria
+We can use information criteria to quickly compare non-nested models while accounting for model complexity.
+
+[[file:Introduction_to_Linear_Modeling/2023-12-04_17-46-19_screenshot.png]]
+
+Information criteria balance two competing forces.
+- Blue: The optimized loglikelihood quantifies fit to the data.
+- Red: The penalty term corrects for model complexity
+
+K number of parameters, amount of x variables in this case
+
+These statistics are only interesting for comparing models, on their on they don't say a lot
+
+*** In R
+#+BEGIN_SRC R :exports both value
+out1 <- lm(bp ~ age, data = dDat)
+coef(out1) -- get coefficients
+#+END_SRC
+** Multiple Linear Regression
+Just simple linear regression with multiple predictor variables.
+*** Comparing models/ multiple R^2/ f statistic
+**** Multiple R^2
+#+BEGIN_SRC R :exports both value
+out1 <- lm(bp ~ age, data = dDat)
+out2 <- lm(bp ~ age + bmi, data = dDat)
+
+## Extract R^2 values:
+r2.1 <- summary(out1)$r.squared
+r2.2 <- summary(out2)$r.squared
+#+END_SRC
+**** F-statistic/null hypothesis
+We test if the fact that the r squard is bigger is conincedence or not
+
+We use the F-statistic to test $H_0:R^2=0$ vs. $H_1:R^2>0$.
+#+BEGIN_SRC R :exports both value
+1 <- summary(out1)$fstatistic
+f1
+value numdf dendf
+55.78116 1.00000 440.00000
+pf(q = f1[1], df1 = f1[2], df2 = f1[3], lower.tail = FALSE)
+#+END_SRC
+
+#+RESULTS:
+value
+4.392569e-13
+
+#+BEGIN_SRC R :exports both value
+f2 <- summary(out2)$fstatistic
+f2
+value numdf dendf
+64.6647 2.0000 439.0000
+pf(f2[1], f2[2], f2[3], lower.tail = FALSE)
+#+END_SRC
+
+#+RESULTS:
+value
+2.433518e-25
+
+How do we quantify the additional variation explained by BMI, above
+and beyond age?
+• Compute the ΔR2
+#+BEGIN_SRC R :exports both value
+## Compute change in R^2:
+r2.2 - r2.1
+#+END_SRC
+
+#+RESULTS:
+[1] 0.115049
+
+How do we know if ΔR2 represents a significantly greater degree of
+explained variation?
+• Use an F-test for H0 : ΔR2 = 0 vs. H1 : ΔR2 > 0
+
+#+BEGIN_SRC R :exports both value
+## Compute change in R^2:
+r2.2 - r2.1
+#+END_SRC
+
+#+RESULTS:
+[1] 0.115049
+
+How do we know if ΔR2 represents a significantly greater degree of
+explained variation?
+• Use an F-test for H0 : ΔR2 = 0 vs. H1 : ΔR2 > 0
+
+#+BEGIN_SRC R :exports both value
+## Is that increase significantly greater than zero?
+anova(out1, out2)
+#+END_SRC
+
+#+RESULTS:
+Analysis of Variance Table
+Model 1: bp ~ age
+Model 2: bp ~ age + bmi
+Res.Df RSS Df Sum of Sq F Pr(>F)
+1 440 74873
+2 439 65167 1 9706.1 65.386 6.057e-15 ***
+---
+Signif. codes:
+0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+**** Comparing models with MSE
+We can also compare models based on their prediction errors.
+• For OLS regression, we usually compare MSE values.
+#+BEGIN_SRC R :exports both value
+mse1 <- MSE(y_pred = predict(out1), y_true = dDat$bp)
+mse2 <- MSE(y_pred = predict(out2), y_true = dDat$bp)
+mse1
+# [1] 169.3963
+mse2
+# [1] 147.4367
+#+END_SRC
+In this case, the MSE for the model with BMI included is smaller.
+• We should prefer the the larger model.
+**** Comparing models with information criteria
+Finally, we can compare models based on information criteria.
+#+BEGIN_SRC R :exports both value
+AIC(out1, out2)
+# df AIC
+# out1 3 3528.792
+# out2 4 3469.424
+BIC(out1, out2)
+# df BIC
+# out1 3 3541.066
+# out2 4 3485.789
+#+END_SRC
+In this case, both the AIC and the BIC for the model with BMI included
+are smaller.
+• We should prefer the the larger model.
+** Categorical Predictors
+Categorical predictors have to be converted to dummy codes:
+|   | drink  | juice | tea |
+| 1 | juice  |     1 |   0 |
+| 2 | coffee |     0 |   0 |
+| 3 | tea    |     0 |   1 |
+| 4 | tea    |     0 |   1 |
+Then these dummy variables can simply be used as normally:
+$$Y=\beta_0+\beta_1X_{juice}+\beta_2X_{tea}+\epsilon$$
+*** Contrast
+All R factors have an associated contrasts attribute.
+• The contrasts define a coding to represent the grouping information.
+• Modeling functions code the factors using the rules defined by the contrasts.
+#+BEGIN_SRC R :exports both value
+x <- factor(c("a", "b", "c"))
+contrasts(x)
+#+END_SRC
+
+#+RESULTS:
+|   | b | c |
+| a | 0 | 0 |
+| b | 1 | 0 |
+| c | 0 | 1 |
+
+*** Significane Testing
+For variables with only two levels, we can test the overall factor’s
+significance by evaluating the significance of a single dummy code.
+#+BEGIN_SRC R :exports both value
+out <- lm(Price ~ Man.trans.avail, data = Cars93)
+partSummary(out, -c(1, 2))
+# Coefficients:
+# Estimate Std. Error t value Pr(>|t|)
+# (Intercept) 23.841 1.623 14.691 <2e-16
+# Man.trans.availYes -6.603 2.004 -3.295 0.0014
+# Residual standard error: 9.18 on 91 degrees of freedom
+# Multiple R-squared: 0.1066,Adjusted R-squared: 0.09679
+# F-statistic: 10.86 on 1 and 91 DF, p-value: 0.001403
+#+END_SRC
+
+For variables with more than two levels, we need to simultaneously evaluate the significance of each of the variable’s dummy codes
+#+BEGIN_SRC R :exports both value
+partSummary(out4, -c(1, 2))
+# Coefficients:
+# Estimate Std. Error t value Pr(>|t|)
+# (Intercept) 21.7187 2.9222 7.432 6.25e-11
+# Man.trans.availYes -5.8410 1.8223 -3.205 0.00187
+# DriveTrainFront -0.2598 2.8189 -0.092 0.92677
+# DriveTrainRear 10.5169 3.3608 3.129 0.00237
+# Residual standard error: 8.314 on 89 degrees of freedom
+# Multiple R-squared: 0.2834,Adjusted R-squared: 0.2592
+# F-statistic: 11.73 on 3 and 89 DF, p-value: 1.51e-06
+#+END_SRC
+
+
+#+BEGIN_SRC R :exports both value
+summary(out4)$r.squared - summary(out)$r.squared
+# [1] 0.1767569
+# anova(out, out4)
+# Analysis of Variance Table
+# Model 1: Price ~ Man.trans.avail
+# Model 2: Price ~ Man.trans.avail + DriveTrain
+# Res.Df RSS Df Sum of Sq F Pr(>F)
+# 1 91 7668.9
+# 2 89 6151.6 2 1517.3 10.976 5.488e-05 ***
+# ---
+# Signif. codes:
+# 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#+END_SRC
+** Model-Based Prediction
+*** Prediction example
+[[file:Introduction_to_Linear_Modeling/2023-12-09_14-20-49_screenshot.png]]
+*** Interval estimates for prediction
+To quantify uncertainty in our predictions, we want to use an appropriate interval estimate:
+There are two flavors:
+**** Confidence interval for $\hat Y_m$
+The CI for ˆYm gives a likely range (in the sense of coverage probability and “confidence”) for the mth value of the true conditional mean.
+
+CIs only account for uncertainty in the estimated regression coefficients, { ˆ𝛽0, ˆ𝛽p}.
+**** Prediction intervals for a specif observation, $Y_m$
+The prediction interval for Ym gives a likely range (in the same sense as CIs) for the mth outcome value.
+
+Prediction intervals also account for the regression errors, 𝜀.
+**** Confidence vs prediction intervals
+CIs for $\hat Y$ ignore the errors, $\epsilon$.
+- Only accounts for the best fit
+
+Prediction intervals are wider than CIs.
+- They account for the additional uncertainty contributed by 𝜀.
+
+#+ATTR_ORG: :width 300
+[[file:Introduction_to_Linear_Modeling/2023-12-09_14-34-27_screenshot.png]]
+
+** Moderation
+Additive models allow us to examine the partial effects of several predictors on some outcome.
+- The effect of one predictor does not change based on the values of other predictors
+
+*Moderation* allows us to ask when one variable, X, affects another variable, Y.
+- We're considering the conditional effects of X on Y given certain levels of a third variable Z.
+- How much a variable effects the outcome is dependent on another variable
+*** Additive regression + derivation
+In addtive MLR we have the following equation:
+$Y=\beta_0+\beta_1X+\beta_2Z+\epsilon$
+This equation assumes that X and Z are independent predictors of Y.
+
+When X and Z are independent predictors, the following are true
+- X and Z can be correlated
+- $\beta_1$ and $\beta_2$ are partial regression coefficients
+- The effect of X and Y is the same at all levels of Z, and the effect of Z on Y is the same at all levels of X.
+
+When testing the moderation, we hypothesize that the effect of X on Y varies af a function of Z.
+- $Y=\beta_0+f(Z)X+\beta_2Z+\epsilon$
+
+If we assume that Z linearly affects the relationship between X and Y:
+- $f(Z)=\beta_1+\beta_3Z$
+
+Combining the two equations:
+- $Y=\beta_0+(\beta_1+\beta_3Z)X+\beta_2Z+\epsilon$
+- $Y=\beta_0+\beta_1X+\beta_2Z+\beta_3XZ+\epsilon$
+*** Test for moderation
+$Y=\beta_0+\beta_1X+\beta_2Z+\beta_3XZ+\epsilon$
+
+To test for moderation we simply need to test the significan of the interaction term, XZ
+
+$\hat\beta_3$ quantifies the effect of Z on the focal effect (the X->Y effect)
+- For a unit change in Z, it is the expected change in the effect of X and Y
+
+$\hat\beta_1\text{ and } \hat\beta_2$ are conditional effects.
+- interpreted where the other predictor is zero
+- For a unit change in X, ˆ𝛽1 is the expected change in Y, when Z = 0.
+- For a unit change in Z, ˆ𝛽2 is the expected change in Y, when X = 0.
+*** in R
+#+BEGIN_SRC R :exports both value
+## Load data:
+socSup <- readRDS(paste0(dataDir, "social_support.rds"))
+## Estimate the moderated regression model:
+out <- lm(bdi ~ tanSat * sex, data = socSup)
+partSummary(out, -c(1, 2))
+
+# Coefficients:
+# Estimate Std. Error t value Pr(>|t|)
+# (Intercept) 20.8478 6.2114 3.356 0.00115
+# tanSat -0.5772 0.3614 -1.597 0.11372
+# sexmale 14.3667 12.2054 1.177 0.24223
+# tanSat:sexmale -0.9482 0.7177 -1.321 0.18978
+# Residual standard error: 9.267 on 91 degrees of freedom
+# Multiple R-squared: 0.08955,Adjusted R-squared: 0.05954
+# F-statistic: 2.984 on 3 and 91 DF, p-value: 0.03537
+#+END_SRC
+
+* Regression Assumptions and Diagnostics
+You always have to make same assumptions to create a model.
+** Assumptions of MLR
+*** 1 The model is linear in the parameters
+This is OK: $Y=\beta_0+\beta_1X+\beta_2Z+\beta_3XZ+\beta_4X^2+\beta_5X^3$
+
+This is not: $Y=\beta_0X^{\beta_1}+\epsilon$
+- power is also a parameter here -> not allowed
+
+If the model is not linear in the parameters, then we’re not even working with linear regression.
+- We need to move to entirely different modeling paradigm
+
+Each modeled X must exhibit a linear relation with Y.
+- We can define X via nonlinear transformations of the original data.
+**** residuals plots
+#+BEGIN_SRC R :exports both value
+out1 <- lm(MPG ~ Horsepower,
+    data = Cars93)
+plot(Cars93$MPG, Cars93$Horsepower)
+plot(out1, 1)
+#+END_SRC
+
+In multiple regression models, basic residual plots won’t tell us which predictors exhibit nonlinear associations.
+**** Component + residuals plots
+We can use Component + Residual Plots (AKA, partial residual plots) to visualize the unique effects of each X variable.
+
+#+BEGIN_SRC R :exports both value
+library(car)
+crPlots(out3)
+#+END_SRC
+**** Treating Residual Nonlinearity
+Nonlinearity in the residual plots is usually a sign of either:
+1. Model misspecification
+2. Influential observations
+
+This type of model misspecification usually implies omitted functions of
+modeled variables.
+- Polynomial terms
+- Interactions
+
+The solution is to include the omitted term into the model and refit.
+- This is very much easier said than done.
+*** 2 The predictor matrix is full rank
+- $N>P$
+- No $X_p$ can be a linear combination of other predictors
+
+If the predictor matrix is not full rank, the model is not estimable.
+- The parameter estimates cannot be uniquely determined from the data
+*** 3 The predictors are strictly exogenous
+The predictors do not correlate with the errors
+- $Cov(\hat Y,\epsilon)=0$
+- $E[\epsilon_n]=0$
+
+If the predictors are not exogenous, the estimated regression coefficients will be biased.
+**** Omitted variables
+The most common cause of endogeneity (i.e., violating Assumption 3) is omitted variable bias.
+- If we leave an important predictor variable out of our equation, some modeled predictors will become endogenous and their estimated regression slopes will be biased.
+- The omitted variable must be correlated with Y and at least one of the modeled Xp, to be a problem.
+
+Assume the following is the true regression model.
+$$Y=\beta_0+\beta_1X+\beta_2Z+\epsilon$$
+
+Now, suppose we omit Z from the model:
+$$Y=\beta_0+\beta_1X+\omega$$
+$$\omega = \epsilon + \beta_2Z$$
+
+Our new error, 𝜔, is a combination of the true error, 𝜀, and the omitted
+term, $\beta_2Z$
+- Consequently, if X and Z are correlated, omitting Z induces a correlation between X and 𝜔 (i.e., endogeneity).
+
+Omitted variable bias can have severe consequences, but you can’t really test for it.
+- The errors are correlated with the predictors, but our model is estimated under the assumption of exogeneity, so the residuals from our model will generally be uncorrelated with the predictors.
+- We mostly have to pro-actively work to include all relevant variables in our model.
+*** 4 The errors have constant, finit variance. heteroscedasticity
+- $Var(\epsilon_n)=\sigma^2<\infty$
+
+see spherical
+**** Consequences of heteroscedasticity
+Non-constant error variance will not bias the parameter estimates.
+- The best fit line is still correct.
+- Our measure of uncertainty around that best fit line is wrong.
+Heteroscedasticity will bias standard errors (usually downward).
+- Test statistics will be too large.
+- CIs will be too narrow.
+- We will have inflated Type I error rates.
+**** Treating heteroscedasticity
+1. Transform your outcome using a concave function (e.g., ln(Y), √Y).
+   - These transformations will shrink extreme values more than small/moderate ones.
+   - It’s usually a good idea to first shift the variable’s scale by setting the minimum value to 1.
+2. Refit the model using weighted least squares.
+   - Create inverse weights using functions of the residual variances or quantities highly correlated therewith.
+3. Use a Heteroscedasticity Consistent (HC) estimate of the asymptotic covariance matrix.
+   - Robust standard errors, Huber-White standard errors, Sandwich estimators
+   - HC estimators correct the standard errors for non-constant error variance.
+
+#+BEGIN_SRC R :exports both value
+## The 'sandwich' package provides several HC estimators:
+library(sandwich)
+## the 'lmtest' package provides fancy testing tools for linear models:
+library(lmtest)
+## Use sandwich estimator to compute ACOV matrix:
+hcCov <- vcovHC(out1)
+## Test coefficients with robust SEs:
+robTest <- coeftest(out1, vcov = hcCov)
+## Test coefficients with default SEs:
+defTest <- summary(out1)$coefficients
+#+END_SRC
+**** Testing
+We can create a residual plot to test for this
+
+Non-constant error variance violates assumption4
+
+#+ATTR_ORG: :width 500
+[[file:Regression_Assumptions_and_Diagnostics/2023-12-11_17-54-50_screenshot.png]]
+
+Non-constant error variance
+*** 5 The errors are uncorrelated
+$\Cov(\epsilon_j,\epsilon_j)=0,\ i\ne j$
+
+see spherical
+**** Correlated Errors
+Errors can become correlated in two basic ways:
+1. Serial dependence
+   - When modeling longitudinal data, the errors for a given observational unit
+   - We can detect temporal dependence by examining the autocorrelation of the residuals
+2. Clustering
+   - Your data have some important, unmodeled, grouping structure
+     - Children nested within classrooms
+     - Romantic couples
+     - Departments within a company
+   - We can detect problematic level of clustering with the intraclass correlation coefficient (icc)
+     - We need to know the clustering variable to apply the icc
+**** Treating Correlated Errors
+Serially dependent errors in a longitudinal model usually indicate an inadequate model.
+- Your model is ignoring some important aspect of the temporal variation that is being absorbed by the error terms.
+- Hopefully, you can add the missing component to your model.
+
+Clustering can be viewed as theoretically meaningful or as a nuisance factor that needs to be controlled
+
+If the clustering is meaningfull, you should model the data using multilevel modelling
+- Hierarchical linear regression
+- Mixed models
+- Random effects models
+
+If the clustering is an uninteresting nuisance, you can use specialized HC variance estimators that deal with clustering
+#+BEGIN_SRC R :exports both value
+## Read in some data:
+LeeBryk <- readRDS(paste0(dataDir, "lee_bryk.rds"))
+## Estimate a linear regression model:
+fit <- lm(math ~ ses + sector, data = LeeBryk)
+## Calculate the residual ICC:
+ICC::ICCbare(x = LeeBryk$schoolid, y = resid(fit))
+#+END_SRC
+
+#+RESULTS:
+| 0.07487712 |
+
+#+BEGIN_SRC R :exports both value
+## Robust tests:
+coeftest(fit, vcov = vcovCL(fit, ~ schoolid))
+
+#t test of coefficients:
+#Estimate Std. Error t value Pr(>|t|)
+#(Intercept) 11.79965 0.20318 58.0746 < 2.2e-16 ***
+#ses 2.94860 0.12794 23.0475 < 2.2e-16 ***
+#sectorprivate 1.93495 0.31717 6.1006 1.111e-09 ***
+#---
+#Signif. codes:
+#0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#+END_SRC
+*** 6 The errors are normally distributed.
+$e\sim N(0,\sigma^2)$
+
+If errors are non-normal, small-sample inferences may be biased.
+- The justification for some tests and procedures used in regression analysis may not hold
+**** Test with Q-Q Plot
+#+BEGIN_SRC R :exports both value
+plot(out1, 2)
+#+END_SRC
+
+One of the best ways to evaluate the normality of the error distribution with a Q-Q Plot.
+- Plot the quantiles of the residual distribution against the theoretically ideal quantiles.
+- We can actually use a Q-Q Plot to compare any two distributions.
+
+#+ATTR_ORG: :width 300
+[[file:Regression_Assumptions_and_Diagnostics/2024-01-02_17-46-29_screenshot.png]]
+
+**** Consequences of Violating Normality
+In small samples, with fixed predictors, normally distributed errors imply normal sampling distributions for the regression coefficients.
+- In large samples, the central limit theorem implies normal sampling distributions for the coefficients, regardless of the error distribution.
+
+Prediction intervals require normally distributed errors.
+- Confidence intervals for predictions share the same normality requirements as the coefficients’ sampling distributions.
+
+Parameter estimates will not be fully efficient.
+- Standard errors will be larger than they would have been with normally distributed errors.
+**** Treating Violations of Normality
+We usually don't need to do anything about non-normal errors
+- The central limit theorem will protect our inferences.
+
+We can use bootstrapping to get around the need for normality.
+1. Treat your sample as a synthetic population from which you draw many new samples (with replacement).
+2. Estimate your model in each new sample.
+3. The replicates of your estimated parameters generate an empirical sampling distribution that you can use for inference.
+
+Bootstrapping can be used for inference on pretty much any estimable
+parameter, but it won’t work with small samples.
+- Need to assume that your sample is representative of the population
+*** Spherical errors (4+5)
+The assumption of spherical erros combines assumptions 4 and 5
+$Var(\epsilon)=\sigma^2I_N$
+
+If the errors are not spherical, the standard errors will be biased.
+- The estimated regression coefficients will be unbiased, though.
+- But the statistics and stuf can be biased
+
+** Regression Diagnostics
+After fitting the model we check the assumptions, most assumptions cant be checked before fitting.
+
+If some of the assumptions are violeted, the inferences we make using the model may be wrong
+- We need to check the tenability of our assumptions before leaning too heavily on the model estimates
+
+These checks are called regression diagnostics
+- Graphical visualizations
+- Quantitative indices/measures
+- Formal statistical
+
+Alot of test require their own assumptions which is bad.
+*** Residual Plots
+One of the most useful diagnostic graphics is the plot of residuals vs. predicted values.
+[[file:Regression_Assumptions_and_Diagnostics/2023-12-11_17-51-01_screenshot.png]]
+
+We can create this plot by plotting the fitted lm() object in R.
+
+#+BEGIN_SRC R :exports both value
+out1 <- lm(Price ~ Horsepower,
+    data = Cars93)
+plot(out1, 1)
+#+END_SRC
+** Influential Observations
+Influential observations contaminate analyses in two ways:
+1. Exert too much influence on the fitted regression model
+2. Invalidate estimates/inferences by violating assumptions
+
+There are two distinct types of influential observations:
+1. Outliers
+   - Observations with extreme outcome values, relative to the other data.
+   - Observations with outcome values that fit the model very badly.
+2. High-leverage observations
+   - Observation with extreme predictor values, relative to other data
+*** Outliers
+Outliers can be identified by scrutinizing the residuals.
+- Observations with residuals of large magnitude may be outliers.
+- The difficulty arises in quantifying what constitutes a “large” residual.
+
+If the residuals do not have constant variance, then we cannot directly compare them.
+- We need to standardize the residuals in some way
+
+We are specifically interested in externally studentized residuals.
+
+We can’t simply standardize the ordinary residuals.
+- Internally studentized residuals
+- Outliers can pull the regression line towards themselves.
+- The internally studentized residuals for outliers will be too small.
+
+Begin by defining the concept of a deleted residual:
+$$ \hat \epsilon_{(n)}=Y_n-\hat Y_{(n)} $$
+- $\hat\epsilon_{(n)}$ quantifies the distance of $Y_n$ from the regression line estimated after excluding the nth observation.
+- $\hat Y_{(n)}$ is the predicted value for the nth observatin from the regression line estimated after exluding the nth observation
+**** Studentized Residuals
+If we standardize the deleted residual, $\hat\epsilon_{(n)}$, we get the externally studentized residual:
+$$t_{(n)}=\frac{\hat\epsilon_{(n)}}{SE_{\hat\epsilon_{(n)}}}$$
+The externally studentized residuals have two very useful properties:
+1. Each t(n) is scaled equivalently.
+   - We can directly compare different t(n) .
+2. The t(n) are Student’s t distributed.
+   - We can quantify outliers in terms of quantiles of the t distribution.
+   - |t(n) | > 3.0 is a common rule of thumb for flagging outliers.
+
+Index plots of the externally studentized residuals can help spotlight potential outliers.
+- Look for observations that clearly "stand out from the crowd"
+
+#+BEGIN_SRC R :exports both value
+rstudent(out1) %>% plot()
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Regression_Assumptions_and_Diagnostics/2024-01-02_19-29-57_screenshot.png]]
+
+*** High-Leverage Points
+We identify high-leverage observations through their leverage values.
+- An observation’s leverage, $h_n$, quantifies the extent to which its predictors affect the fitted regression model.
+- Observations with $X$ values very far from the mean, $\bar X$, affect the fitted model disproportionately.
+
+Index plots of the leverage values can help spotlight high-leverage points.
+- Again, look for observations that clearly “stand out from the crowd.”
+
+In simple linear regression, the nth leverage is given by:
+$$h_n=\frac 1 N + \frac{(X_n-\bar X)^2}{\sum^N_{m=1}(X_m-\bar X)^2}$$
+
+#+BEGIN_SRC R :exports both value
+hatvalues(out1) %>% plot()
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Regression_Assumptions_and_Diagnostics/2024-01-02_19-38-14_screenshot.png]]
+
+*** Influential Points
+Observations with high leverage or large (externally) studentized residuals are not necessarily influential.
+- High-leverage observations tend to be more influential than outliers.
+- The worst problems arise from observations that are both outliers and have high leverage.
+
+Measures of influence simultaneously consider extremity in both X and Y dimensions.
+- Observations with high measures of influence are very likely to cause problems.
+
+All measures of influence use the same logic as the deleted residual.
+- Compare models estimated from the whole sample to models estimated from samples excluding individual observations.
+
+One of the most common measures of influence is *Cook’s Distance*
+$$Cook's D_n=\frac{\sum^N_{n=1}(\hat Y_n-\hat Y_{(n)})^2}{(P+1)\hat \sigma^2}=(P+1)^{-1}t^2_n\frac{h_n}{1-h_n}$$
+
+Index plots of Cook’s distances can help spotlight the influential points.
+- Look for observations that clearly “stand out from the crowd.”
+
+#+BEGIN_SRC R :exports both value
+cd <- cooks.distance(out1)
+plot(cd)
+#+END_SRC
+
+#+ATTR_ORG: :width 300
+[[file:Regression_Assumptions_and_Diagnostics/2024-01-02_19-49-05_screenshot.png]]
+*** Removing Influential Observations
+Observation number 28 was the most influential according to Cook's Distance
+#+BEGIN_SRC R :exports both value
+(maxD <- which.max(cd))
+#+END_SRC
+
+#+RESULTS:
+| 28 |
+
+#+BEGIN_SRC R :exports both value
+## Exclude the influential case:
+Cars93.2 <- Cars93[-maxD, ]
+## Fit model with reduced sample:
+out2 <- lm(Price ~ Horsepower, data = Cars93.2)
+round(summary(out1)$coefficients, 6)
+#+END_SRC
+
+#+RESULTS:
+| Estimate    |      Std. |    Error |   t value | Pr(>\vert{}t\vert{}) |
+| (Intercept) | -1.398769 | 1.820016 | -0.768548 |             0.444152 |
+| Horsepower  |  0.145371 | 0.011898 | 12.218325 |             0.000000 |
+
+#+BEGIN_SRC R :exports both value
+round(summary(out2)$coefficients, 6)
+#+END_SRC
+
+#+RESULTS:
+| Estimate    |      Std. |    Error | t   value | Pr(>\vert{}t\vert{}) |
+| (Intercept) | -2.837646 | 1.806418 | -1.570868 |             0.119722 |
+| Horsepower  |  0.156750 | 0.011996 | 13.066942 |             0.000000 |
+
+Removing the outlier did not have a massive effect on the slope but it did lower the t-values by quite a bit
+
+#+ATTR_ORG: :width 300
+[[file:Regression_Assumptions_and_Diagnostics/2024-01-02_20-02-02_screenshot.png]]
+
+You could also remove the 2 most influential observations
+
+#+BEGIN_SRC R :exports both value
+(maxDs <- sort(cd) %>% names() %>% tail(2) %>% as.numeric())
+
+## Exclude influential cases:
+Cars93.2 <- Cars93[-maxDs, ]
+
+## Fit model with reduced sample:
+out2.2 <- lm(Price ~ Horsepower, data = Cars93.2)
+#+END_SRC
+
+*** Treating Influential Points
+The most common way to address influential observations is simply to delete them and refit the model.
+- This approach is often effective—and always simple—but it is not fool-proof.
+- Although an observation is influential, we may not be able to justify excluding it from the analysis.
+
+Robust regression procedures can estimate the model directly in the presence of influential observations.
+- Observations in the tails of the distribution are weighted less in the estimation process, so outliers and high-leverage points cannot exert substantial influence on the fit.
+- We can do robust regression with the rlm() function from the MASS package.
+
+* Assumtions of Logistic Regression
+** 1 The model is linear in the parameters
+same as linear regression
+** 2 The predictor matrix if full rank
+- $N>P$
+- No $X_p$ can be a linear combination of other predictors
+** 3 The outcome is independently and identically binomially distributed
+$$Y_n \sim^{iid} Bin(\hat\pi, 1)$$
