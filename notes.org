@@ -1,4 +1,4 @@
-#+title: Lecture 1
+#+title: Fundamental Techniques in Data Science with R Notes
 #+STARTUP: latexpreview
 #+STARTUP: show2levels
 #+EXPORT_FILE_NAME: index.html
@@ -2236,6 +2236,206 @@ Robust regression procedures can estimate the model directly in the presence of 
 - Observations in the tails of the distribution are weighted less in the estimation process, so outliers and high-leverage points cannot exert substantial influence on the fit.
 - We can do robust regression with the rlm() function from the MASS package.
 
+
+* Generalized Linear Model & Logistic regression
+** General Linear model
+So far we have only discussed general linear models:
+
+$$Y = \beta_0 + \sum ^p_{p=1} \beta_p X_p+\epsilon$$
+
+All flavor of linear regression are general linear models
+- Simple Linear regression, Multiple Linear Regression
+- t-test, ANOVA, ANCOVA
+- Multilevel linear regression models
+
+We can break our model into pieces:
+- $\eta = \beta_0 + \sum ^p_{p=1} \beta_p X_p$
+- $Y = \eta + \epsilon$
+
+$\epsilon \sim N(0,\sigma^2)$, so we can also write:
+$$Y\sim N(\eta,\sigma^2)$$
+
+Where:
+- $\eta$ is the *systematic component* of the model (AKA, the *linear predictor*)
+- The normal distribution, $N(...,...)$ is the model's *random component*
+
+The purpose of general linear modeling is to build a model of the outcome's mean $\mu_Y$
+- In this case $\mu_Y = \eta$
+- The systematic component defines the mean of $Y$
+
+The random component quantifies variability around $\mu_Y$
+- In the general linear model, we assume that this error variance follows a normal distribution
+** Generalized Linear Model
+We can generalize the models we've been using in two important ways:
+
+1. Allow for random components other than the normal distribution
+2. Allow for more complicated relations between $\mu_Y$ and $\eta$
+   - Allow a link function: $g(\mu_Y)=\eta$
+
+Like this we optain the class of *generalized linear models (GLMs)*
+
+The random component in a GLM can be any distribution from the *exponential family:*
+- Normality
+- Binomial
+- Poisson
+- Many others...
+
+The systematic component of a GLM is exactly the same as it is in general linear models.
+- $\eta = \beta_0 + \sum ^p_{p=1} \beta_p X_p$
+
+In GLMs, $\eta$ does not directly describe $\mu_Y$
+- We first transform $\mu_Y$ via a link function
+
+The link function performs two important functions
+1. Linearize the association betweeen $X$ and $Y$
+   - Nonlinear: $X\rightarrow \mu_Y$
+   - Linear: $X\rightarrow g(\mu_Y)$
+2. Allows GLMs for outcomes with the restricted ranges without requiring any restrictions on the range of the $\{X_P\}$
+   - In many cases, $\mu_Y$
+     - Counts: $\mu_Y > 0$
+     - Probabilities: $\mu_Y \in [0,1]$
+   - When correctly specified, $g(\mu_Y)$ can take any value on the real line
+
+Every GLM is built from three components
+1. *The systematic component, $\eta$*
+   - A linear function of the predictors, $\{X_P\}$
+   - Describes the association between $X$ and $Y$
+2. *The link function, $g(\eta_Y)$*
+   - Linearizes the relation between $X$ and $Y$
+   - Transforms $\mu_Y$ so that it can take any value on the real line
+3. *The random component, $P(Y|g^{-1}(\eta))$*
+   - The distribution of the observed $Y$
+   - Quantifies the error variance around $\eta$
+
+The General Linear Model is a special case of GLM
+1. Systematic component:
+   $$\eta = \beta_0 + \sum ^p_{p=1} \beta_p X_p$$
+2. Link function:
+   $$\mu_Y=\eta$$
+3. Random component:
+   $$Y\sim N(\eta, \sigma^2)$$
+*** Generalized Linear Model in R
+In R you can train a generalized linear model with =glm=
+#+BEGIN_SRC R :exports both value
+data(iris)
+
+## Generalized linear model:
+glmFit <- glm(Petal.Length ~ Petal.Width + Species,
+              family = gaussian(link = "identity"),
+              data = iris)
+#+END_SRC
+** Logistic Regression
+We want to use logistic regression for a classification task with a two-level outcome.
+
+Using a linear model doesn't work well for this kind off task
+- The link function ensures legal predicted values (between 0 and 1)
+- The sigmoid curve implies fluctuation in the effectiveness of extra study time
+  - /example below:/ More study time is most beneficial for students with around 5.5 hours of study
+
+#+ATTR_ORG: :width 350
+[[file:Generalized_Linear_Model_&_Logistic_regression/2024-01-09_15-40-58_screenshot.png]]
+
+In logistic regression problems we are modeling binary data:
+- $Y\in\{1="Succes",0="failure"\}$
+
+The systematic component in our logistic regression model will be the binomial distribution.
+
+The mean of the binomial distribution (with $N=1$) is the "succes" probability, $\pi=P(Y=1)$
+- we are interested in modelling this succes probability, $\mu_Y=\pi$:
+$$g(\pi) = \beta_0 + \sum ^p_{p=1} \beta_p X_p$$
+
+We use the *logit link* function to convert the output of the systematic component to a value between 0 and 1.
+- Given $\pi$, the odds of succes are:
+  $$O_s=\frac \pi {1-\pi}$$
+- Because $\pi \in [0,1]$, we know that $O_s \ge 0$
+- We can take the natural log of the odds as the last step to fully map $\pi$ to the real line
+  $$\operatorname{logit}(\pi)=\ln\left(\frac \pi {1-\pi}\right)$$
+
+Note that in the above function we map the probability to the real line, not the other way around.
+- For the other way around use the *logistic function*: <<inverse_logit>>
+  $$\sigma(x)=\frac 1 {1+e^{-x}}=\frac {e^x} {1+e^x}$$
+  - Also called sigmoid or expit
+  - Is the inverse of the logit function
+
+Our final logistic regression model is:
+
+$$Y\sim \operatorname{Bin}(\pi,1)$$
+$$\operatorname{logit}(\pi)=\beta_0 + \sum^p_{p=1}\beta_pX_p$$
+
+The fitted model can be represented as:
+$$\operatorname{logit}(\hat\pi)=\hat\beta_0 + \sum^p_{p=1}\hat\beta_pX_p$$
+** Interpreting logistic regression
+We have a model:
+
+$$\operatorname{logit}(\hat\pi)=\hat\beta_0 + \sum^p_{p=1}\hat\beta_pX_p$$
+
+The fitted coefficients, $\{\hat\beta_0, \hat\beta_p\}$, are interpreted in units of *log odds*.
+
+Log odds do not lend themselves to interpretation.
+- We can convert the effects back to an odds scale by exponentiation
+- $\hat\beta$ has log odds units, but $e^\hat\beta$ has *odds units*.
+
+/note for all these interpretations odds and probabilities are not the same!/
+
+Exponentiating the coefficients also converts the additive effects to
+multiplicative effects.
+- We can interpret $\hat\beta$ as we would in linear regression:
+  - A unit change in $X_p$ produces an expected change of $\hat\beta$ units in $\operatorname{logit}(\pi)$
+- After exponentiation, however, unit changes in $X_p$ imply multiplicative changes in the odds, $O_s=\frac \pi {1-\pi}$
+  - A unit change in $X_p$ results in multiplying $O_s$ by $e^{\hat\beta_p}$
+
+Due to the confusing interpretations of the coefficients, we often focus on the valence of the effects.
+- Additional study time is associated with increased odds of passing
+- $\hat\beta_p>0 = "Increased Succes"$, $e^{\hat\beta_p}>1 = "Increased succes"$
+
+[[https://www.kylemlang.com/fundamentals/wk6/lecture/glm.pdf][For example interpretations look at the slides, start from slide 28]]
+** Model Comparison for logistic regression
+We don’t have an $R^2$ statistic for logistic regression models, so we need to use a *likelihood ratio* test to compare nested models.
+
+#+BEGIN_SRC R :exports both value
+anova(fit0, fit, test = "LRT")
+
+## Analysis of Deviance Table
+##
+## Model 1: survived ~ age + sex
+## Model 2: survived ~ age + sex + class
+## Resid. Df Resid. Dev Df Deviance Pr(>Chi)
+## 1 884 916.00
+## 2 882 801.59 2 114.41 < 2.2e-16 ***
+## ---
+## Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#+END_SRC
+
+We can also use *information criteria*
+
+#+BEGIN_SRC R :exports both value
+AIC(fit0, fit)
+
+## df AIC
+## fit0 3 921.9989
+## fit 5 811.5940
+
+BIC(fit0, fit)
+
+## df BIC
+## fit0 3 936.3624
+## fit 5 835.5333
+#+END_SRC
+** Classification with logistic regression
+Given a fitted logistic regression model, we can get predictions for new observations $X'_p$
+
+Directly apply $\hat\beta_0,\hat\beta_p$ to $X'_p$ will produce predictions on the scale of $\eta$
+$$\hat\eta ' = \hat\beta_0+\sum^p_{p=1}\hat\beta_pX'_p$$
+
+By applying the [[inverse_logit][inverse link function]] $g^{-1}()$, to $\hat\eta'$, we get predicted succes probabilities
+$$\hat\pi'=g^{-1}(\hat\eta')$$
+
+Once we have computed the predicted succes probabilities $\hat\pi'$, we can use them to classify new observations
+
+By choosing a threshold on $\hat\pi'$, say $\hat\pi'=t$, we can classify the new observations as succes or failures
+$$\hat Y'= \begin{cases} 1 &\text{ if }\hat\pi'\ge t \\ 0 &\text{ if }\hat\pi'\ge t  \end{cases}$$
+
+Note the optional threshold is not always $0.5$.
 * Assumtions of Logistic Regression
 ** 1 The model is linear in the parameters
 same as linear regression
