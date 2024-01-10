@@ -1,0 +1,5 @@
+#+title: Readme
+#+AUTHOR: Martijn Voordouw
+
+Notes for Fundamental Techniques in Data Science with R
+- [[https://martv0.github.io/data_notes/][Read the notes here]]

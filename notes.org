@@ -1,6 +1,8 @@
 #+title: Fundamental Techniques in Data Science with R Notes
+#+AUTHOR: Martijn Voordouw
 #+STARTUP: latexpreview
 #+STARTUP: show2levels
+#+STARTUP: inlineimages
 #+EXPORT_FILE_NAME: index.html
 #+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-bigblow.setup
 
