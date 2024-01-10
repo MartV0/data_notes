@@ -1853,7 +1853,7 @@ partSummary(out, -c(1, 2))
 * Regression Assumptions and Diagnostics
 You always have to make same assumptions to create a model.
 ** Assumptions of MLR
-*** 1 The model is linear in the parameters
+*** 1 The model is linear in the parameters <<la1>>
 This is OK: $Y=\beta_0+\beta_1X+\beta_2Z+\beta_3XZ+\beta_4X^2+\beta_5X^3$
 
 This is not: $Y=\beta_0X^{\beta_1}+\epsilon$
@@ -1892,7 +1892,7 @@ modeled variables.
 
 The solution is to include the omitted term into the model and refit.
 - This is very much easier said than done.
-*** 2 The predictor matrix is full rank
+*** 2 The predictor matrix is full rank <<la2>>
 - $N>P$
 - No $X_p$ can be a linear combination of other predictors
 
@@ -2168,7 +2168,7 @@ Measures of influence simultaneously consider extremity in both X and Y dimensio
 All measures of influence use the same logic as the deleted residual.
 - Compare models estimated from the whole sample to models estimated from samples excluding individual observations.
 
-One of the most common measures of influence is *Cook’s Distance*
+One of the most common measures of influence is *Cook’s Distance* <<cooks>>
 $$Cook's D_n=\frac{\sum^N_{n=1}(\hat Y_n-\hat Y_{(n)})^2}{(P+1)\hat \sigma^2}=(P+1)^{-1}t^2_n\frac{h_n}{1-h_n}$$
 
 Index plots of Cook’s distances can help spotlight the influential points.
@@ -2237,8 +2237,6 @@ The most common way to address influential observations is simply to delete them
 Robust regression procedures can estimate the model directly in the presence of influential observations.
 - Observations in the tails of the distribution are weighted less in the estimation process, so outliers and high-leverage points cannot exert substantial influence on the fit.
 - We can do robust regression with the rlm() function from the MASS package.
-
-
 * Generalized Linear Model & Logistic regression
 ** General Linear model
 So far we have only discussed general linear models:
@@ -2438,11 +2436,339 @@ By choosing a threshold on $\hat\pi'$, say $\hat\pi'=t$, we can classify the new
 $$\hat Y'= \begin{cases} 1 &\text{ if }\hat\pi'\ge t \\ 0 &\text{ if }\hat\pi'\ge t  \end{cases}$$
 
 Note the optional threshold is not always $0.5$.
-* Assumtions of Logistic Regression
+* Assumptions of Logistic Regression
 ** 1 The model is linear in the parameters
-same as linear regression
+[[la1][Same as linear regression]]
+- This is OK: $$\operatorname{logit}(\pi)=\beta_0 + \beta_1X + \beta_2Z + \beta_3X^2$$
+- This is not: $$\operatorname{logit}(\pi)=\beta_0X^{\beta_1}$$
+*** Checking Assumption 1
+Assumption 1 implies a linear relation between continuous predictors and the logit of the success probability.
+- We can basically evaluate the linearity assumption using the same methods we applied with linear regression.
+
+#+BEGIN_SRC R :exports both value
+car::crPlots(glmFit, terms = ~ age + fare)
+#+END_SRC
+
+#+ATTR_ORG: :width 500
+[[file:Assumtions_of_Logistic_Regression/2024-01-10_15-15-52_screenshot.png]]
 ** 2 The predictor matrix if full rank
+[[la2][Same as linear regression]]
 - $N>P$
 - No $X_p$ can be a linear combination of other predictors
+*** Checking Assumption 2
+Basically the same as for linear regression Assumption 2 implies two conditions:
+1. P > N
+2. No severe (multi)collinearity among the predictors
+
+We can quantify multicollinearity with the variance inflation factor (VIF).
+
+#+BEGIN_SRC R :exports both value
+car::vif(glmFit)
+#+END_SRC
+
+#+RESULTS:
+|      age |      sex |     fare |
+| 1.031829 | 1.007699 | 1.026373 |
+
+VIF > 10 indicates severe multicollinearity.
 ** 3 The outcome is independently and identically binomially distributed
+The distributional assumptions of logistic regression are not framed in terms of residuals.
+
+This assumption fills the role played by all residual-related assumptions in linear regression.
+
+Instead we consider the entire outcome distribution in logistic regression.
+
 $$Y_n \sim^{iid} Bin(\hat\pi, 1)$$
+$$\hat\pi_n=\operatorname{logistic}\left( \hat\beta_0 + \sum^p_{p=1} \hat\beta_pX_{np} \right)$$
+*** Checking Assumption 3
+Assumption 3 implies several conditions.
+1. The outcome, Y, is binary.
+2. The linear predictor, 𝜂, can explain all the systematic trends in $\pi$.
+   - No residual clustering after accounting for X.
+   - No important variables omitted from X.
+
+We can easily check the first condition with summary statistics.
+
+#+BEGIN_SRC R :exports both value
+levels(titanic$survived)
+#+END_SRC
+
+#+RESULTS:
+| "no" | "yes" |
+
+#+BEGIN_SRC R :exports both value
+table(titanic$survived)
+#+END_SRC
+
+#+RESULTS:
+|  no | yes |
+| 545 | 342 |
+
+If we have a non-binary, categorical outcome, we can use a different type of model.
+- Multiclass nominal variables: multinomial logistic regression
+  - =nnet::multinom()=
+- Ordinal variables: Proportional odds logistic regression
+  - =MASS::polr()=
+- Counts: Poisson regression
+  - =glm()= with =family = "poisson"=
+
+The binomial distribution is also appropriate for modeling the proportion of successes in N trials.
+
+For the second condition:
+
+We can check for residual clustering by calculating the ICC using deviance residuals.
+#+BEGIN_SRC R :exports both value
+## Check for residual dependence induced by 'class':
+ICC::ICCbare(x = titanic$class, y = resid(glmFit, type = "deviance"))
+#+END_SRC
+
+#+RESULTS:
+| 0.1054665 |
+
+
+** Residuals
+In logistic regression the outcome is binary, $Y\in\{0,1\}$, but the parameter that we’re trying to model is continuous, $\pi \in (0,1)$.
+- Due to this mismatch in measurements levels, we don't have a natural definition of a "residual" in logistic regression
+
+The most basic residual is the *raw residual*, $e_n$
+- The difference between the observerd outcome value and the predicted probability
+$$e_n=Y_n-\hat\pi_n$$
+
+We train a model on the titanic dataset:
+#+BEGIN_SRC R :exports both value
+## Read the data:
+titanic <- readRDS(paste0(dataDir, "titanic.rds"))
+## Estimate the logistic regression model:
+glmFit <- glm(survived ~ age + sex + fare,
+data = titanic,
+family = "binomial")
+## Save the linear predictor estimates:
+titanic$etaHat <- predict(glmFit, type = "link")
+#+END_SRC
+
+Raw residual plot:
+#+BEGIN_SRC R :exports both value
+library(ggplot)
+
+## Calculate the raw residuals:
+titanic$e <- resid(glmFit, type = "response")
+
+## Plot raw residuals vs. fitted
+## linear predictor values:
+ggplot(titanic, aes(etaHat, e)) +
+    geom_point() +
+    geom_smooth() +
+    theme_classic() +
+    xlab("Linear Predictor") +
+    ylab("Raw Residual")
+#+END_SRC
+
+#+ATTR_ORG: :width 350
+[[file:Assumtions_of_Logistic_Regression/2024-01-10_14-31-15_screenshot.png]]
+
+*Pearson residuals*, $r_n$, are scaled raw residuals
+$$r_n=\frac {e_n}{\sqrt{\hat\pi_n(1-\hat\pi_n)}}$$
+
+#+BEGIN_SRC R :exports both value
+## Calculate the Pearson residuals:
+titanic$r <- resid(glmFit, type = "pearson")
+#+END_SRC
+
+*Deviance residuals*, $d_n$, are derived directly from the objective function used to estimate the model.
+
+$$d_n=sign(e_n)\sqrt{-2[Y_n\ln (\hat\pi_n)+(1-Y_n)\ln(1-\hat\pi_n)]} $$
+
+The *residual deviance*, $D$, is the sum of squared deviance residuals.
+- Quantifies how well the model fits the data
+$$D=\sum^N_{n=1}d^2_n$$
+** Computational Considerations
+In Addition to the preceding statistical assumptions, we must satisfy three computational requirements that were not necessary in linear regression.
+*** 1 Sufficient sample size
+Logistic regression models are estimated with numerical methods, so we need larger samples than we would for linear regression models.
+- The sample size requirements increase with model complexity.
+
+Some suggested rules of thumb:
+- 10 cases for each predictor (Agresti, 2018)
+- $N = 10P/\pi_0$ (Peduzzi, Concato, Kemper, Holford, & Feinstein, 1996)
+  - $P$: Number of predictors
+  - $\pi_0$: Proportion of the minority class
+- $N = 100 + 50P$ (Bujang, Omar, & Baharum, 2018)
+*** 2 Outcome classes are sufficiently balanced
+The logistic regression may not perform well when the outcome classes are severely imbalanced.
+- e.g. way more of one class then the other
+
+#+BEGIN_SRC R :exports both value
+with(titanic, table(survived) / length(survived))
+#+END_SRC
+
+#+RESULTS:
+|        no |       yes |
+| 0.6144307 | 0.3855693 |
+
+We have a few possible solutions for problematic imbalance:
+- Down-sampling the majority class
+  - Randomly remove some samples from the majority class
+- Up-sampling the minority class
+  - Random select samples from the minority class to use multiple times
+- Use weights when estimating the logistic regression model
+  - =weights= argument in =glm()=
+*** 3 There is no perfect prediction
+We don’t actually want to perfectly predict class membership.
+- The model cannot estimate with perfectly separable classes.
+
+Why?
+- Imagine the shape of the logit function to estimate classes which can be seperated perfectly
+- The slope would have to be really low, then really high
+- To get this the slope would have to be infinite, which obviously can't be estimated
+
+Model regularization (e.g., ridge or LASSO penalty) may help.
+- =glmnet::glmnet()=
+** Influential Cases
+As with linear regression, we need to deal with any overly influential cases.
+- We can use the linear predictor values to calculate [[cooks][Cook’s Distances]].
+- Any cases that exerts undue influence on the linear predictor will have the same effect of the predicted success probabilities.
+
+#+BEGIN_SRC R :exports both value
+cooks.distance(glmFit) %>% plot()
+#+END_SRC
+
+#+ATTR_ORG: :width 350
+[[file:Assumptions_of_Logistic_Regression/2024-01-10_16-41-13_screenshot.png]]
+
+#+BEGIN_SRC R :exports both value
+plot(glmFit, 4)
+#+END_SRC
+
+#+ATTR_ORG: :width 350
+[[file:Assumptions_of_Logistic_Regression/2024-01-10_16-42-16_screenshot.png]]
+** Classification Performance Measures
+*** Confusion Matrix
+One of the most direct ways to evaluate classification performance is the *confusion matrix*.
+
+#+BEGIN_SRC R :exports both value
+## Add predictions to the dataset:
+titanic %<>%
+    mutate(piHat = predict(glmFit, type = "response"),
+           yHat = as.factor(ifelse(piHat <= 0.5, "no", "yes")))
+
+library(caret)
+
+cMat <- titanic %$% confusionMatrix(data = yHat, reference = survived)
+
+cMat$table
+#+END_SRC
+
+#+RESULTS:
+|            | Reference |     |
+| Prediction |        no | yes |
+| no         |       458 | 106 |
+| yes        |        87 | 236 |
+
+Each cell in the confusion matrix represents a certain classification result:
+- *TP true positive*: Correctly predicted positive
+- *TN true negative*: Correctly predicted negative
+- *FP false positive*: Falsely predicted positive
+- *FN false negative*: Falsely predicted negative
+
+#+BEGIN_SRC R :exports both value
+cMat$overall
+#+END_SRC
+
+#+RESULTS:
+|     Accuracy |        Kappa | AccuracyLower | AccuracyUpper | AccuracyNull | AccuracyPValue | McnemarPValue |
+| 7.824126e-01 | 5.359709e-01 |  7.537802e-01 |  8.091549e-01 | 6.144307e-01 |   7.471405e-27 |  1.950898e-01 |
+
+#+BEGIN_SRC R :exports both value
+cMat$byClass
+#+END_SRC
+
+#+RESULTS:
+| Sensitivity | Specificity | Pos Pred Value |       Neg Pred Value |         Precision |    Recall |
+|   0.8403670 |   0.6900585 |      0.8120567 |            0.7306502 |         0.8120567 | 0.8403670 |
+|          F1 |  Prevalence | Detection Rate | Detection Prevalence | Balanced Accuracy |           |
+|   0.8259693 |   0.6144307 |      0.5163472 |            0.6358512 |         0.7652127 |           |
+
+Summaries/statistics of the Confusion matrix:
+- $Accuracy = (TP+TN)/(P+N)$
+- $Error\ Rate = (FP+FN)/(P+N)=1-Accuracy$
+- $Sensitivity = TP/(TP+FN)$<<sensitivity>>
+- $Specificity = TN/(TN+FP)$<<specificity>>
+- $False\ Positive\ Rate  (FPR)=FP/(TN+FP)=1-Specificity$
+- $Positive\ Predictive\ Value\ (PPV) = TP / (TP + FP)$
+- $Negative\ Predictive\ Value\ (NPV) = TN / (TN + FN)$
+*** TODO ROC Curve
+A receiver operating characteristic (ROC) curve illustrates the diagnostic ability of a binary classifier for all possible values of the classification threshold.
+- The ROC curve plots [[sensitivity][sensitivity]] against [[specificity][specificity]] at different threshold values.
+
+The area under the ROC curve (AUC) is a one-number summary of the potential performance of the classifier.
+- The AUC does not depend on the classification threshold.
+
+#+BEGIN_SRC R :exports both value
+pROC::auc(rocData)
+#+END_SRC
+
+#+RESULTS:
+| Area under the curve: 0.8298 |
+
+Rule of thumb for AUC according to Mandrekar (2010):
+- AUC value from 0.7 – 0.8: Acceptable
+- AUC value from 0.8 – 0.9: Excellent
+- AUC value over 0.9: Outstanding
+*** Threshold Selection
+We can use numerical methods to estimate an optimal threshold value
+#+BEGIN_SRC R :exports both value
+library(OptimalCutpoints)
+ocOut <- optimal.cutpoints(X = "piHat",
+                           status = "survived",
+                           tag.healthy = "no",
+                           data = titanic,
+                           method = "ROC01"
+                           )
+
+partSummary(ocOut, -1)
+#+END_SRC
+
+=Area under the ROC curve (AUC): 0.83 (0.802, 0.858)=
+
+=CRITERION: ROC01=
+
+=Number of optimal cutoffs: 1=
+
+|                   |    Estimate |
+|-------------------+-------------|
+| cutoff            |   0.2360978 |
+| Se                |   0.7543860 |
+| Sp                |   0.7761468 |
+| PPV               |   0.6789474 |
+| NPV               |   0.8343195 |
+| DLR.Positive      |   3.3700029 |
+| DLR.Negative      |   0.3164531 |
+| FP                | 122.0000000 |
+| FN                |  84.0000000 |
+| Optimal criterion |   0.1104365 |
+*** Cross-Entropy Error
+Not exam material, might be usefull for the practical though.
+
+Measuring classification performance from a confusion matrix can be
+problematic.
+
+• Sometimes too coarse.
+
+We can also base our error measure on the residual deviance with the Cross-Entropy Error:
+$$CEE = -N^{-1} \sum^N_{n=1} Y_n\ln(\hat\pi_n) + (1 - Y_n) \ln(1 -\hat\pi_n)$$
+- The CEE is sensitive to classification confidence.
+- Stronger predictions are more heavily weighted
+
+The misclassification rate is a na¨ıvely appealing option.
+- The proportion of cases assigned to the wrong group
+
+Consider two perfect classifiers:
+1. P( ˆYn = 1|Yn = 1) = 0.90, P( ˆYn = 1|Yn = 0) = 0.10, n = 1, 2, . . . , N
+2. P( ˆYn = 1|Yn = 1) = 0.55, P( ˆYn = 1|Yn = 0) = 0.45, n = 1, 2, . . . , N
+
+Both of these classifiers will have the same misclassification rate.
+- Neither model ever makes an incorrect group assignment.
+
+The first model will have a lower CEE.
+- The classifications are made with higher confidence.
+- CEE1 = 0.105, CEE2 = 0.598
